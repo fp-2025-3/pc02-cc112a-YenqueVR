@@ -2,17 +2,23 @@
 using namespace std;
 
 void imprimirPolinomio(const double* p, int grado);
-void derivarPol(double arr[], int n, int k);
+void derivadaK(const double* coef ,int grado, int k, double* res, int& gradoRes);
 
 int main(){
     double coeft[]={2,3,-1,4};
-    int grado=sizeof(coeft)/sizeof(coeft[0])-1;
+    int grado=sizeof(coeft)/sizeof(coeft[0])-1; //si n=4 -> grado=3
+    double resultado[10];   //espacio para coeficientes de la derivada
+    int gradoResultado=0; //grado de la derivada (por ahora)
+    int k=2;    //grado de la derivada del polinomio (k=2, segunda derivada)
 
-    cout<<"Polinomio original: "<<endl;
+    cout<<"Polinomio original:\n ";
     imprimirPolinomio(coeft,grado);
 
-    int k=2;
-    derivarPol(coeft,grado,k);
+    derivadaK(coeft,grado,k,resultado,gradoResultado);   //calculamos la derivada del polinomio original
+
+    cout<<"\nDerivada de grado "<<k<<":\n ";
+    imprimirPolinomio(resultado,gradoResultado);
+
     return 0;
 }
 
