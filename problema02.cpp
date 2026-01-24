@@ -17,11 +17,50 @@ int main(){
     int *fin=arr+N;
     int clave=13;
 
+    cout<<"\nA[] = ";
+    imprimirArreglo(inicio,fin); //imprimir arreglo A[]
+    cout<<"\nClave: "<<clave<<endl; //imprimir clave
+
+    //lista de nociones
+    bool (*eq)(int,int)=igual;
+    int *ptr=buscar(inicio,fin,eq,clave);
+    cout<<"\nIgualdad exacta: ";
+    if(ptr!=nullptr) cout<<"encontrado valor: "<<*ptr<<" Pos: "<<ptr;
+    else cout<<"\nNo encontrado";
+
+    eq=mismaParidad;
+    int *ptr=buscar(inicio,fin,eq,clave);
+    cout<<"\nMisma paridad: ";
+    if(ptr!=nullptr) cout<<"encontrado valor: "<<*ptr<<" Pos: "<<ptr;
+    else cout<<"\nNo encontrado";
+
+    eq=divideA;
+    int *ptr=buscar(inicio,fin,eq,clave);
+    cout<<"\nDivide a: ";
+    if(ptr!=nullptr) cout<<"encontrado valor: "<<*ptr<<" Pos: "<<ptr;
+    else cout<<"\nNo encontrado";
+
+    eq=mismaCantidadDigitos;
+    int *ptr=buscar(inicio,fin,eq,clave);
+    cout<<"\nMisma cantidad de digitos: ";
+    if(ptr!=nullptr) cout<<"encontrado valor: "<<*ptr<<" Pos: "<<ptr;
+    else cout<<"\nNo encontrado";
+
+    eq=mismoResiduoMod5;
+    int *ptr=buscar(inicio,fin,eq,clave);
+    cout<<"\nMismo residuo modulo 5: ";
+    if(ptr!=nullptr) cout<<"encontrado valor: "<<*ptr<<" Pos: "<<ptr;
+    else cout<<"\nNo encontrado";
+
+    cout<<endl;
     return 0;
 }
 
 void imprimirArreglo(int *inicio, int *fin){
-
+    for(int *i=inicio; i<fin; i++){
+        cout<<*i<<" ";
+    }
+    cout<<endl;
 }
 
 int* buscar(int *inicio, int *fin, bool (*equivale)(int,int), int clave){
