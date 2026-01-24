@@ -16,21 +16,20 @@ int main(){
     return 0;
 }
 
-void derivarPol(double arr[], int n, int k){
-    int i=n-1;
-    for(double *p=arr+n-1; p>=arr; --p, i--){
-        for(int j=i; j>i-k; --j){
-            *p *= j;
+void derivadaK(const double* coef ,int grado, int k, double* res, int& gradoRes){
+    gradoRes = grado - k;   //grado de la derivada actualizada
+    int gradoK=0;   //grado k: exponente del termino del polinomio original (x^k)
+    for(const double *i=coef; i<=coef+grado; i++, gradoK++){    //desde x^0 a x^grado
+        int gradoDervK=gradoK-k;    //grado k de los terminos de la derivada
+        if(gradoDervK>=0){  //se almacena desde el grado 0 de la derivada
+            *(res+gradoDervK)= *i;  //copiamos el valor del coeficiente en la derivada
+            for(int j=gradoK; j>gradoK-k; j--){ //multiplicamos el coeficiente con el valor de exponentes
+                *(res+gradoDervK)*=j;   //si K=2, gradoK=3, "a" coef, a*3*2
+            }
         }
+        //se descarta del polinomio los terminos con exponente menor a k
+        //para hallar la derivada a partir del exponente k del original
     }
-
-    cout<<"\nDerivada de orden "<<k<<":\n";
-    for(int i=n-1; i>n-1-k; --i){
-        if(i==n-1) cout<<*(arr+i)<<"x^"<<i-k;
-        else if(i==n-k) cout<<" + "<<*(arr+i);
-        else if(*(arr+i)!=0) cout<<" + "<<*(arr+i)<<"x^"<<i;
-    }
-    cout<<endl;
 }
 
 void imprimirPolinomio(const double* p, int grado){
