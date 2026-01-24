@@ -5,6 +5,7 @@ const int F=4;
 const int C=5;
 
 void imprimirMatrizYpicos(int (*inicio)[C], int (*fin)[C]);
+int *posicionPico(int (*inicio)[C], int (*fin)[C], int (*i)[C], int *j);
 
 int main(){
 
@@ -23,7 +24,23 @@ int main(){
     return 0;
 }
 
+int *posicionPico(int (*inicio)[C], int (*fin)[C], int (*i)[C], int *j){
+    bool alMenosMayor=false;    //al menos a uno debe ser mayor de sus vecino
+    bool mayorOigual=true;  //debe ser mayor o igual que sus vecinos
+    //comparar arriba
+    if(i-1>=inicio && *(*(i-1)+(j-*i))<=*j){    //i-1: fila anterior, j-*i: posicion columna desde el comienzo de fila i 
+        alMenosMayor=true;
+    }else if(i!=inicio) mayorOigual=false;  //no modifica nada si esta en la fila = inicio
+    //abajo
+    if(i+1<fin && *(*(i+1)+(j-*i))<=*j){ 
+        alMenosMayor=true;
+    }else if(i!=fin-1) mayorOigual=false;   //no modifica nada si esta en la fila = fin-1
+    //izquierda
+    
+}
+
 void imprimirMatrizYpicos(int (*inicio)[C], int (*fin)[C]){
+    //imprimir la matriz A
     cout<<"\nMatriz A["<<F<<"]["<<C<<"]:  ";
     for(int (*i)[C]=inicio; i<fin; i++){    //desde la primera fila hasta la ultima
         if(i!=inicio) cout<<"                 ";
@@ -33,4 +50,7 @@ void imprimirMatrizYpicos(int (*inicio)[C], int (*fin)[C]){
         cout<<endl;
     }
     cout<<endl;
+    int (*i)[C]=inicio+1;
+    int *j=*i+1;
+    cout<<*(*(i-1)+(j-*i))<<endl;
 }
