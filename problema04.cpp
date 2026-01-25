@@ -5,6 +5,7 @@ const int F=4;
 const int C=5;
 
 int sumaSubmatriz(int (*i)[C], int *pos1, int *pos2);
+void sumaSubmatrizMaxima(int (*inicio)[C]);
 
 int main(){
     
@@ -49,4 +50,25 @@ int sumaSubmatriz(int (*inicio)[C], int *pos1, int *pos2){
     }
 
     return suma;    //retorna la suma de los elementos de la submatriz
+}
+
+void sumaSubmatrizMaxima(int (*inicio)[C]){
+    int sumaSubMmaxima=**inicio;
+    int (*MAX_f1)[C]=inicio, (*MAX_f2)[C]=inicio;   //inicializamos
+    int *MAX_c1=*inicio, *MAX_c2=*inicio;
+
+    for(int (*f1)[C]=inicio; f1<inicio+F; f1++){
+        for(int *c1=*f1; c1<*f1+C; c1++){
+            for(int (*f2)[C]=f1; f2<inicio+F; f2++){
+                for(int *c2=*f2; c2<*f2+C; c2++){
+                    int sumaSubM=sumaSubmatriz(inicio,c1,c2);
+                    if(sumaSubM>sumaSubMmaxima){    //si la suma actual es mayor que la maxima
+                        sumaSubMmaxima=sumaSubM;    //actualizamos la suma maxima con la actual
+                        MAX_f1=f1; MAX_c1=c1;       //y actualizamos los punteros de los limitantes
+                        MAX_f2=f2; MAX_c2=c2;       //de la subMatriz
+                    }
+                }
+            }
+        }
+    }
 }
