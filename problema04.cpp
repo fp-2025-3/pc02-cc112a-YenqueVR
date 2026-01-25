@@ -4,6 +4,8 @@ using namespace std;
 const int F=4;
 const int C=5;
 
+void imprimirMatriz(int (*inicio)[C], int *pos1, int *pos2);
+void hallarPosicionExacta(int (*inicio)[C], int *pos1, int *pos2, int (*f1)[C], int *c1, int (*f2)[C], int *c2);
 int sumaSubmatriz(int (*i)[C], int *pos1, int *pos2);
 void sumaSubmatrizMaxima(int (*inicio)[C]);
 
@@ -17,16 +19,26 @@ int main(){
     };
     int (*inicio)[C]=A;
     int *pos1=*inicio;
-    int *pos2=(*(inicio+F-1))+C-1;
+    int *pos2=*(inicio+F-1)+C-1;
 
-    cout<<"\nSuma de submatriz: "<<sumaSubmatriz(inicio,pos1,pos2)<<endl;
+    cout<<"\nMatriz A["<<F<<"]["<<C<<"]:\n";
+    imprimirMatriz(inicio,pos1,pos2); //imprimimos la matriz A[][]
+
+    sumaSubmatrizMaxima(inicio);    //ejecutamos para hallar la submatriz de suma maxima
+
     return 0;
 }
 
-void imprimirMatriz(int (*inicio)[C], int (*fin)[C]){
-    for(int (*i)[C]=inicio; i<fin; i++){
+void imprimirMatriz(int (*inicio)[C], int *pos1, int *pos2){
+
+    int (*f1)[C]=inicio, (*f2)[C]=inicio;   //inicializamos
+    int *c1=*inicio, *c2=*inicio;
+
+    hallarPosicionExacta(inicio,pos1,pos2,f1,c1,f2,c2); //almacena la posicion en f1,c1,f2,c2
+
+    for(int (*i)[C]=f1; i<=f2; i++){
         cout<<" ";
-        for(int *j=*i; j<*i+C; i++){
+        for(int *j=*i+(c1-*f1); j<=*i+(c2-*f2); i++){
             if(*j>=0){
                 cout<<" "<<*j<<" ";
             }else{
@@ -38,10 +50,7 @@ void imprimirMatriz(int (*inicio)[C], int (*fin)[C]){
     cout<<endl;
 }
 
-int sumaSubmatriz(int (*inicio)[C], int *pos1, int *pos2){
-    int (*f1)[C]=inicio, (*f2)[C]=inicio;
-    int *c1=*inicio, *c2=*inicio;
-
+void hallarPosicionExacta(int (*inicio)[C], int *pos1, int *pos2, int (*f1)[C], int *c1, int (*f2)[C], int *c2){
     //hallar la posicion exacta en la matriz de las posiciones 
     for(int (*i)[C]=inicio; i<inicio+F; i++){
         for(int *j=*i; j<*i+C; j++){
@@ -55,6 +64,13 @@ int sumaSubmatriz(int (*inicio)[C], int *pos1, int *pos2){
             }
         }
     }
+}
+
+int sumaSubmatriz(int (*inicio)[C], int *pos1, int *pos2){
+    int (*f1)[C]=inicio, (*f2)[C]=inicio;
+    int *c1=*inicio, *c2=*inicio;
+
+    hallarPosicionExacta(inicio,pos1,pos2,f1,c1,f2,c2); //almacena la posicion en f1,c1,f2,c2
 
     //calcular la suma de elementos de la submatriz delimitada
     int suma=0;
@@ -75,7 +91,7 @@ void sumaSubmatrizMaxima(int (*inicio)[C]){
     for(int (*f1)[C]=inicio; f1<inicio+F; f1++){
         for(int *c1=*f1; c1<*f1+C; c1++){
             for(int (*f2)[C]=f1; f2<inicio+F; f2++){
-                for(int *c2=*f2; c2<*f2+C; c2++){
+                for(int *c2=*f2+(c1-*f1); c2<*f2+C; c2++){
                     int sumaSubM=sumaSubmatriz(inicio,c1,c2);
                     if(sumaSubM>sumaSubMmaxima){    //si la suma actual es mayor que la maxima
                         sumaSubMmaxima=sumaSubM;    //actualizamos la suma maxima con la actual
@@ -86,4 +102,6 @@ void sumaSubmatrizMaxima(int (*inicio)[C]){
             }
         }
     }
+
+    cout<<"\nSubmatriz de suma maxima:\n";
 }
