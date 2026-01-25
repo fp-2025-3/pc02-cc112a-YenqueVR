@@ -23,6 +23,21 @@ int main(){
     return 0;
 }
 
+void imprimirMatriz(int (*inicio)[C], int (*fin)[C]){
+    for(int (*i)[C]=inicio; i<fin; i++){
+        cout<<" ";
+        for(int *j=*i; j<*i+C; i++){
+            if(*j>=0){
+                cout<<" "<<*j<<" ";
+            }else{
+                cout<<*j<<" ";
+            }
+        }
+        cout<<endl;
+    }
+    cout<<endl;
+}
+
 int sumaSubmatriz(int (*inicio)[C], int *pos1, int *pos2){
     int (*f1)[C]=inicio, (*f2)[C]=inicio;
     int *c1=*inicio, *c2=*inicio;
