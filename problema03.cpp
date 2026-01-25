@@ -24,28 +24,29 @@ int main(){
     return 0;
 }
 
-int *posicionPico(int (*inicio)[C], int (*fin)[C], int (*i)[C], int *j){    //int (*i)[C]: fila i, int *j: pos en fila i
-    bool alMenosMayor=false;    //al menos a uno debe ser mayor de sus vecino
+int* posicionPico(int (*inicio)[C], int (*fin)[C], int (*i)[C], int *j){    //int (*i)[C]: fila i, int *j: pos en fila i
+    bool alMenosMayor=false;    //al menos a uno debe ser mayor de sus vecinos
     bool mayorOigual=true;  //debe ser mayor o igual que sus vecinos
+
     //comparar arriba
-    if(i-1>=inicio && *(*(i-1)+(j-*i))<=*j){    //i-1: fila anterior, j-*i: posicion columna desde el comienzo de fila i 
+    if(i-1>=inicio && *(*(i-1)+(j-*i))<*j){    //i-1: fila anterior, j-*i: posicion columna desde el comienzo de fila i 
         alMenosMayor=true;
-    }else if(i!=inicio) mayorOigual=false;  //no modifica nada si esta en la fila = inicio
+    }else if(i!=inicio && *(*(i-1)+(j-*i))>*j) mayorOigual=false;  //no modifica nada si esta en la fila = inicio
 
     //abajo
-    if(i+1<fin && *(*(i+1)+(j-*i))<=*j){ 
+    if(i+1<fin && *(*(i+1)+(j-*i))<*j){ 
         alMenosMayor=true;
-    }else if(i!=fin-1) mayorOigual=false;   //no modifica nada si esta en la fila = fin-1
+    }else if(i!=fin-1 && *(*(i+1)+(j-*i))>*j) mayorOigual=false;   //no modifica nada si esta en la fila = fin-1
 
     //izquierda
-    if(j-1>=*i && *(j-1)<=*j){  //j-1: elemento anterior, *(j-1): valor del elemento anterior
+    if(j-1>=*i && *(j-1)<*j){  //j-1: elemento anterior, *(j-1): valor del elemento anterior
         alMenosMayor=true;
-    }else if(j!=*i) mayorOigual=false;  //no modifica nada si esta en la columna = *i
+    }else if(j!=*i && *(j-1)>*j) mayorOigual=false;  //no modifica nada si esta en la columna = *i
 
     //derecha
-    if(j+1<*i+C && *(j+1)<=*j){
+    if(j+1<*i+C && *(j+1)<*j){
         alMenosMayor=true;
-    }else if(j!=*i+C-1) mayorOigual=false;  //no modifica nada si esta en la columna = *i
+    }else if(j!=*i+C-1 && *(j+1)>*j) mayorOigual=false;  //no modifica nada si esta en la columna = *i
 
     if(alMenosMayor && mayorOigual) return j;   //si cumple, retorna la direccion o posicion del elemento pico
     else return *fin;   //si no cumple, retorna la direccion *fin = *(A+F) o *(inicio+F)
