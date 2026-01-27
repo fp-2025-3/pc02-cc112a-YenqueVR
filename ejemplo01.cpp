@@ -4,6 +4,7 @@ using namespace std;
 size_t my_strlen(const char *str);
 char* my_strcpy(char *destino, const char *origen);
 char* my_strcat(char *destino, const char *origen);
+int my_strcmp(const char *cad1, const char *cad2);
 
 int main(){
     char cadena[]="acido dexosiribonucleico";
@@ -52,4 +53,16 @@ char* my_strcat(char *destino, const char *origen){
     }
     *destino='\0';  //finalizamos con caracter nulo
     return ptr;
+}
+
+int my_strcmp(const char *cad1, const char *cad2){
+    for(; *cad1!='\0' && *cad2!='\0'; cad1++, cad2++){
+        if(*cad1!=*cad2){  
+            return *cad1-*cad2; //diferencia antes del primer caracter nulo
+        }
+    }
+    if(*cad1!=*cad2){   //si son diferentes, ambos no son caracteres nulos
+        return *cad1-*cad2; //diferencia en el primer caracter nulo
+    }
+    return 0;   //retorna 0 si al final ambos son caracteres nulos despues de revisar todo
 }
