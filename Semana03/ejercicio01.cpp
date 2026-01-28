@@ -21,7 +21,6 @@ int main(){
     ordenar(cortas,nc);
     ordenar(largas,nl);
     imprimir_grupo("cortas",cortas,nc);
-    cout<<endl;
     imprimir_grupo("largas",largas,nl);
 
     return 0;
@@ -32,7 +31,7 @@ int separar_palabras(char* texto, char* palabras[]){
     int contPalabras=0;
     for(; *p!='\0'; p++){    //hasta terminar el texto
         if(*p!=' ' && (p==texto || *(p-1)==' ')){
-            palabras[contPalabras]=p;    //almacenamos el puntero al primer caracter de la palabra
+            *(palabras+contPalabras)=p;    //almacenamos el puntero al primer caracter de la palabra
             contPalabras++; //aumentamos el numero de palabras que hay en el texto
         }
     }
