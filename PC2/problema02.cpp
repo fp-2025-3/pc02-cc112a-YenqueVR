@@ -75,9 +75,10 @@ bool igual(int a, int b){
 bool mismaParidad(int a, int b){
     if(a<0) a*=-1;  //vuelve positivo para comparar correctamente
     if(b<0) b*=-1;
-    return ((a%2==0 && b%2==0)||(a%2==1 && b%2==1));    //ambos pares o impares
+    return a%2==b%2;
 }
 bool divideA(int a, int b){
+    if(a==0) return false;
     return b%a==0;  //si su division es exacta
 }
 bool mismaCantidadDigitos(int a, int b){
