@@ -1,49 +1,98 @@
 #include<iostream>
 using namespace std;
 
-char* my_strcpy(char *destino, const char *origen);
-int my_strcmp(const char *cad1, const char *cad2);
-void ordenarNombres(char (*nombres)[20], int N);
+int separar_palabras(char* texto, char* palabras[]);
+int longitud_palabra(const char* p);
+void clasificar(char* palabras[], int n, char* cortas[], int& nc, char* largas[], int& nl);
+int comparar_palabras(const char* a, const char* b);
+void ordenar(char* v[], int n);
+void imprimir_grupo(const char* titulo, char* v[], int n);
+void intercambiar(char *&a, char *&b);
 
 int main(){
-    char nombres[][20]={"Lesly","Americo","Xingbeck","William","Julio","Darwin","Kevin"};
-    ordenarNombres(nombres,7);
-    for(char (*i)[20]=nombres; i<nombres+7; i++){
-        cout<<"\n"<<*nombres;
-    }
+    char texto[300]="Programar en C++ requiere logica C++ exige disciplina";
+    char* palabras[60];
+    char* cortas[60];
+    char* largas[60];
+    int nc,nl;
+
+    int n=separar_palabras(texto,palabras);
+    clasificar(palabras,n,cortas,nc,largas,nl);
+    ordenar(cortas,nc);
+    ordenar(largas,nl);
+    imprimir_grupo("cortas",cortas,nc);
+    cout<<endl;
+    imprimir_grupo("largas",largas,nl);
+
     return 0;
 }
 
-void ordenarNombres(char (*nombres)[20], int N){
-    for(char (*i)[20]=nombres; i<nombres+N-1; i++){
-        for(char (*j)[20]=i+1; j<nombres; j++){
-            if(my_strcmp(*i,*j)>0){
-                char temp[20];
-                my_strcpy(temp,*i);
-                my_strcpy(*i,*j);
-                my_strcpy(*j,temp);
+int separar_palabras(char* texto, char* palabras[]){
+    char *p=texto;  //puntero al primer caracter del texto
+    int contPalabras=0;
+    for(; *p!='\0'; p++){    //hasta terminar el texto
+        if(*p!=' ' && (p==texto || *(p-1)==' ')){
+            palabras[contPalabras]=p;    //almacenamos el puntero al primer caracter de la palabra
+            contPalabras++; //aumentamos el numero de palabras que hay en el texto
+        }
+    }
+    return contPalabras;
+}
+
+int longitud_palabra(const char* p){
+    const char *inicio=p; //puntero al primer caracter
+    for(; *p!='\0' && *p!=' '; p++);   //p avanza hasta el caracter nulo o el primer espacio que encuentre
+    return p-inicio;  //la diferencia entre punteros es la longitud
+}
+
+int comparar_palabras(const char* a, const char* b){
+    for(; *a!='\0' && *b!='\0' && *a!=' ' && *b!=' '; a++, b++){
+        if(*a!=*b){
+            return *a-*b;   //diferencia antes del caracter nulo o primer espacio
+        }
+    }
+    if(*a!=*b){
+        return *a-*b;   //diferencia con al menos uno, o caracter nulo o espacio
+    }
+    return 0;   //ambos llegaron al mismo tiempo al caracter nulo o al primer espacio, son iguales
+}
+
+void clasificar(char* palabras[], int n, char* cortas[], int& nc, char* largas[], int& nl){
+    nc=0;
+    nl=0;
+    for(char **i=palabras; i<palabras+n; i++){
+        if(longitud_palabra(*i)>3){
+            *(largas+nl)=*i;
+            nl++;
+        }else{
+            *(cortas+nc)=*i;
+            nc++;
+        }
+    }
+}
+
+void ordenar(char* v[], int n){
+    for(char **i=v; i<v+n-1; i++){
+        for(char **j=v; j<v+n-(i-v)-1; j++){
+            if(comparar_palabras(*j,*(j+1))>0){
+                intercambiar(*j,*(j+1));
             }
         }
     }
 }
 
-char* my_strcpy(char *destino, const char *origen){
-    char *ptr=destino;
-    for(; *origen!='\0'; origen++, destino++){
-        *destino=*origen;
-    }
-    *destino='\0';  //terminamos la cadena con el caracter nulo
-    return ptr;
+void intercambiar(char *&a, char *&b){
+    char *temp=a;
+    a=b;
+    b=temp;
 }
 
-int my_strcmp(const char *cad1, const char *cad2){
-    for(; *cad1!='\0' && *cad2!='\0'; cad1++, cad2++){
-        if(*cad1!=*cad2){  
-            return *cad1-*cad2; //diferencia antes del primer caracter nulo
+void imprimir_grupo(const char* titulo, char* v[], int n){
+    cout<<"\nPalabras "<<titulo<<endl;
+    for(char **i=v; i<v+n; i++){
+        for(char *j=*i; *j!='\0' && *j!=' '; j++){
+            cout<<*j;
         }
+        cout<<endl;
     }
-    if(*cad1!=*cad2){   //si son diferentes, ambos no son caracteres nulos
-        return *cad1-*cad2; //diferencia en el primer caracter nulo
-    }
-    return 0;   //retorna 0 si al final ambos son caracteres nulos despues de revisar todo
 }
