@@ -45,14 +45,23 @@ int longitud_palabra(const char* p){
     return p-inicio;  //la diferencia entre punteros es la longitud
 }
 
-int comparar_palabras(const char* a, const char* b){
+int comparar_palabras(const char* a, const char* b){    //no modificamos la frase original
+    char a1=*a,b1=*b;   //almacena los caracteres
     for(; *a!='\0' && *b!='\0' && *a!=' ' && *b!=' '; a++, b++){
-        if(*a!=*b){
-            return *a-*b;   //diferencia antes del caracter nulo o primer espacio
+        a1=*a;
+        b1=*b;
+        if(a1>='A' && a1<='Z') a1+=('a'-'A');   //para que lo haga alfabeticamente sin importar mayusculas
+        if(b1>='A' && b1<='Z') b1+=('a'-'A');
+        if(a1!=b1){
+            return a1-b1;   //diferencia antes del caracter nulo o primer espacio
         }
     }
-    if(*a!=*b){
-        return *a-*b;   //diferencia con al menos uno, o caracter nulo o espacio
+    a1=*a;
+    b1=*b;
+    if(a1>='A' && a1<='Z') a1+=('a'-'A');   //para que lo haga alfabeticamente sin importar mayusculas
+    if(b1>='A' && b1<='Z') b1+=('a'-'A');
+    if(a1!=b1){
+        return a1-b1;   //diferencia con al menos uno, o caracter nulo o espacio
     }
     return 0;   //ambos llegaron al mismo tiempo al caracter nulo o al primer espacio, son iguales
 }
