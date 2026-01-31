@@ -2,8 +2,8 @@
 #include<cstring>
 using namespace std;
 
-int numerizador(char *p);
-bool existeNumerosQueSumenK(char *texto, int k);
+int numerizador(const char *p);
+bool existeNumerosQueSumenK(const char *texto, int k);
 
 int main(){
     char texto[]="1, 2, 4, 7, 11";
@@ -20,42 +20,33 @@ int main(){
     return 0;
 }
 
-int numerizador(char *num){
+int numerizador(const char *num){
     int suma=0;
-    for(char *p=num; *p!='\0' && *p!=' ' && *p!=','; p++){ //recorre hasta llegar al caracter nulo, espacio o coma
-        suma=suma*10 + (*p-'0');    //convertimos en numeros
+    for(; *num!='\0' && *num!=' ' && *num!=','; num++){ //recorre hasta llegar al caracter nulo, espacio o coma
+        suma=suma*10 + (*num-'0');    //convertimos en numeros
     }
     return suma;    //devolvemos el numero entero
 }
 
-bool existeNumerosQueSumenK(char *texto, int k){
-    char *inicio=texto;
-    char *fin=texto+strlen(texto);
-    int numI, numF;
-    bool encontradoNumI=false, encontradoNumF=false;
+bool existeNumerosQueSumenK(const char *texto, int k){
 
-    while(inicio<fin){
-        if(*inicio!=' ' && *inicio!=',' && (inicio==texto || *(inicio-1)==' ')){    //nos ubica al inicio del numero
-            numI=numerizador(inicio);
-            encontradoNumI=true;
-        }else ++inicio;
+    int arregloEnteros[30]; //espacio suficiente para almacenar los numeros del texto
+    int nEnteros=0;     //cantidad de numeros enteros en el texto
 
-        if(*fin!=' ' && *fin!=',' && (fin==texto || *(fin-1)==' ')){    //nos ubica al inicio del numero
-            numF=numerizador(fin);
-            encontradoNumF=true;
-        } else --fin;
-
-        if(encontradoNumI && encontradoNumF){
-            if(numI+numF>k){    //si la suma es mayor que k
-                --fin;          //el puntero de fin pasa al numero de izquierda
-                encontradoNumF=false;
-                encontradoNumI=false;
-            }else if(numI+numF<k){    //si la suma es menor que k
-                ++inicio;       //el puntero inicio pasa al numero de la derecha
-                encontradoNumF=false;
-                encontradoNumI=false;
-            }else return true;    //retorna verdadero si la suma es igual a k
+    for(const char *p=texto; *p!='\0'; p++){
+        if(*p>='0' && *p<='9' && (p==texto || *(p-1)==' ' || *(p-1)==',')){ //nos ubica al inicio del numero
+            *(arregloEnteros+nEnteros)=numerizador(p);  //extrae el numero del texto hacia el arreglo
+            nEnteros++; //aumenta la cantidad de numeros del texto
         }
+    }
+
+    int *inicio=arregloEnteros;     //primer numero del arreglo de enteros
+    int *fin=arregloEnteros+nEnteros-1;     //ultimo numero del arreglo de enteros
+
+    while(inicio<fin){  //su ordenamiento de forma ascendente facilita 
+        if(*inicio+*fin==k) return true;    //encontro los numeros que suman k
+        else if(*inicio+*fin>k) fin--;  //fin se mueve a la izquierda para reducir la suma
+        else if(*inicio+*fin<k) inicio++;   //inicio se mueve a la derecha para aumentar la suma
     }
     return false;   //no encontro numeros que sumen k
 }
