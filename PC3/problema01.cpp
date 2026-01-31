@@ -1,9 +1,8 @@
 #include<iostream>
-#include<cstring>
 using namespace std;
 
 int numerizador(const char *p);
-bool existeNumerosQueSumenK(const char *texto, int k);
+bool existeNumerosQueSumenK(const char *texto, const int k);
 
 int main(){
     char texto[]="1, 2, 4, 7, 11";
@@ -28,7 +27,7 @@ int numerizador(const char *num){
     return suma;    //devolvemos el numero entero
 }
 
-bool existeNumerosQueSumenK(const char *texto, int k){
+bool existeNumerosQueSumenK(const char *texto, const int k){
 
     int arregloEnteros[30]; //espacio suficiente para almacenar los numeros del texto
     int nEnteros=0;     //cantidad de numeros enteros en el texto
