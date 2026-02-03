@@ -126,4 +126,5 @@ void mostrarPromedio(float prom, float min, float max){
 
 void liberarMemoria(float *&arr){
     delete[] arr;
+    arr=nullptr;
 }
