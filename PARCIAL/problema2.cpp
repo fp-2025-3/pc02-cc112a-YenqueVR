@@ -9,8 +9,10 @@ void datosCorredor(char **nombre, int *tiempo);
 void ordenarRanking(char **nombres, int *tiempo, int n);
 void rankingFinal(char **nombres, int *tiempo, int n);
 void intercambiar(char **nombres1, int *tiempo1, char **nombres2, int *tiempo2);
-void buscarCorredorPorNombre(char **nombres, int *tiempo, int n);
-void opciones(int &opc);
+void buscarCorredorPorNombre(char **nombres, int *tiempo, int n);   //funciona para mayusculas y minusculas por igual
+void buscarCorredoresPorRango(char **nombres, int *tiempo, int n);
+int opciones();
+int compararNombres(char *nombres, char *temp);
 
 
 
@@ -33,11 +35,18 @@ void sistema(char **&nombres, int *&tiempo, int n){
 
     int opc;
     do{
-        opciones(opc);
+        opc=opciones();
+
+        if(cin.fail()){ //detecta si hay error en el cin, ejm: cin>>opc="hola" -> no valido
+            cin.clear();
+            cin.ignore(50,'\n');
+            opc=-1; //opcion de error
+        }
+
         switch(opc){
             case 1: buscarCorredorPorNombre(nombres,tiempo,n);
             break;
-            case 2:
+            case 2: buscarCorredoresPorRango(nombres,tiempo,n);
             break;
             case 3:
             cout<<"\nSaliendo...\n";
@@ -47,6 +56,17 @@ void sistema(char **&nombres, int *&tiempo, int n){
             break;
         }
     }while(opc!=3);
+
+    for(int i=0; i<n; i++){
+        delete[] *(nombres+i);
+        *(nombres+i)=nullptr;
+    }
+    delete[] nombres;   //liberamos memoria
+    delete[] tiempo;
+    nombres=nullptr;    //evitamos punteros colgantes
+    tiempo=nullptr;
+
+    cout<<"\nHa salido del programa.\n";
 }
 
 int numeroCorredores(){
@@ -62,30 +82,51 @@ int numeroCorredores(){
 
 void registrarCorredores(char **nombres, int *tiempo, int n){
     for(int i=0; i<n; i++){
-        cout<<"Nombre del corredor "<<i+1<<": ";
-        char temp[20];
-        cin.ignore();   //limpiar buffer del anterior cin   
-        cin.getline(temp,20);   //obtenemos el nombre
+        cin.ignore(50,'\n');   //limpiar buffer del anterior cin de n o tiempo
 
-        int tam=strlen(temp);   //obtenemos el tamaño del nombre
-        *(nombres+i)=new char[tam+1];   //creamos espacio de memoria
+        while(true){
+            char temp[20];
+            cout<<"Nombre del corredor "<<i+1<<": ";
+            cin.getline(temp,20);   //obtenemos el nombre
 
-        //copiamos el nombre del corredor en nombres
-        for(char *p=temp; p<=temp+tam; p++){
-            *(*(nombres+i)+(p-temp))=*p;    //copiado con todo caracter nulo
+            //puesto dado que no registra bien con mas de 20 caracteres
+            if(cin.fail()){     //si se excede los 20 caracteres incluyendo caracter nulo
+                cin.clear();    //limpiamos el estado de fail
+                cin.ignore(50,'\n');    //ignoramos lo sobrante del buffer
+            }
+
+            int tam=strlen(temp);   //obtenemos el tamaño del nombre
+            if(tam==0){
+                cout<<"No se registro un nombre, intentelo de nuevo\n\n";
+                continue;    //si no hay texto, nos vuelve a pedir ingresar de nuevo
+            }
+
+            *(nombres+i)=new char[tam+1];   //creamos espacio de memoria
+
+            //copiamos el nombre del corredor en nombres
+            strcpy(*(nombres+i),temp);
+            break;
         }
 
-        //puesto dado que no registra bien con mas de 20 caracteres
-        if(cin.fail()){     //si se excede los 20 caracteres incluyendo caracter nulo
-            cin.clear();    //limpiamos el estado de fail
-            cin.ignore(50,'\n');    //ignoramos lo sobrante del buffer
+        while(true){
+            int t;
+            cout<<"Tiempo (en segundos): ";
+            cin>>t; //obtenemos el tiempo del corredor
+
+            if(cin.fail()){
+                cin.clear();
+                cin.ignore(50,'\n');
+                cout<<"Entrada de tiempo invalido, intentelo de nuevo\n\n";
+                continue;
+            }
+
+            if(t<0){
+                cout<<"No puedes registrar un tiempo negativo, intentelo de nuevo\n\n";
+                continue;
+            }
+            *(tiempo+i)=t;
+            break;
         }
-
-        int t;
-        cout<<"Tiempo (en segundos): ";
-        cin>>t; //obtenemos el tiempo del corredor
-        *(tiempo+i)=t;
-
         cout<<endl;
     }
 }
@@ -119,38 +160,74 @@ void rankingFinal(char **nombres, int *tiempo, int n){
     }
 }
 
-void opciones(int &opc){
-    cout<<"\n === ¿Que desea realizar? ===";
+int opciones(){
+    int opc;
+    cout<<"\n === Que desea realizar? ===";
     cout<<"\n1. Buscar corredor por nombre";
     cout<<"\n2. Buscar corredores por rango de tiempo";
     cout<<"\n3. Salir";
     cout<<"\nOpcion --> ";
     cin>>opc;
+    return opc;
 }
 
 void buscarCorredorPorNombre(char **nombres, int *tiempo, int n){
+    cin.ignore(50,'\n');
     char temp[20];
     cout<<"\nIngrese el nombre a buscar: ";
     cin.getline(temp,20);
 
+    if(cin.fail()){ //si supera los 20 caracteres
+        cin.clear();
+        cin.ignore(50,'\n');
+    }
+
     for(int i=0; i<n; i++){
-        if(strcmp(*(nombres+i),temp)==0){
+        if(compararNombres(*(nombres+i),temp)==0){
             cout<<"Corredor encontrado";
             cout<<"\nPosicion: "<<i+1;
             cout<<"\nTiempo: "<<*(tiempo+i);
             cout<<endl;
-            return; //cuando lo encuentra sale del bucle y la funcion
+            return;
         }
     }
-    //si no lo encuentra, continual hacia al mensaje de no encontrado
+
     cout<<"Corredor no encontrado";
     cout<<"\nVerifique si escribio correctamente el nombre\n";
 }
 
 void buscarCorredoresPorRango(char **nombres, int *tiempo, int n){
+    cin.ignore(50,'\n');
     int Tmax, Tmin;
     cout<<"\nIngrese el tiempo minimo y maximo: ";
     cout<<"\nTiempo minimo: "; cin>>Tmin;
     cout<<"Tiempo maximo: "; cin>>Tmax;
-    cout<<"Corredores en el rango ["<<Tmin<<", "<<Tmax<<"]:";
+
+    if(Tmin<0 || Tmax<0 || Tmin>Tmax){
+        cout<<"\nNo es un intervalo de tiempo adecuado\n";
+        return;
+    }
+
+    cout<<"Corredores en el rango ["<<Tmin<<", "<<Tmax<<"]:\n";
+    for(int i=0; i<n; i++){
+        if(*(tiempo+i)>=Tmin && *(tiempo+i)<=Tmax){
+            cout<<*(nombres+i)<<" - "<<*(tiempo+i)<<" segundos\n";
+        }
+    }
+}
+
+int compararNombres(char *nombres, char *temp){
+    char a=*nombres, b=*temp;
+    for(; *nombres!='\0' && *temp!='\0'; nombres++, temp++){
+        a=*nombres; b=*temp;
+        if(a>='A' && a<='Z') a+=32; //convierte a minusculas
+        if(b>='A' && b<='Z') b+=32;
+        if(a!=b) return a-b;    //retorna la diferencia si no son iguales
+    }
+    a=*nombres; b=*temp;
+    if(a>='A' && a<='Z') a+=32; //convierte a minusculas
+    if(b>='A' && b<='Z') b+=32;
+    if(a!=b) return a-b;    //retorna la diferencia si no son iguales
+
+    return 0;   //retorna 0 si las dos cadenas son iguales
 }
