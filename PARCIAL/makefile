@@ -1,4 +1,4 @@
-﻿# Makefile 
+# Makefile 
 CXX := g++
 
 # Flags base
