@@ -8,7 +8,7 @@
 ![alt text](imag/imagen2.png)
 
 ## Ejercicio 3
-
+![alt text](imag/imagen3.png)
 
 ## Ejercicio 4
 

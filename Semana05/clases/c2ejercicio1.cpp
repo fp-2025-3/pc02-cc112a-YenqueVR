@@ -1,79 +1,34 @@
 #include<iostream>
-#include<string>
+#include<cmath>
 using namespace std;
 
-struct Estudiante {
-    string nombre;
-    float nota;
+struct Punto {
+    float x,y,z;
 };
 
-int numeroEstudiantes(int &n);
-Estudiante *registrarEstudiantes(int n);
-void NotaMasAlta(const Estudiante *e, int n);
-void liberarMemoria(Estudiante *&e);
+void coordenadasPuntos(Punto &a, Punto &b);
+void distanciaEntrePuntos(Punto a, Punto b);
 
 int main(){
-    int n;
-    if(numeroEstudiantes(n)==-1) return 0;
-
-    Estudiante *est=registrarEstudiantes(n);
-
-    NotaMasAlta(est,n);
-
-    liberarMemoria(est);
+    Punto a,b;
+    coordenadasPuntos(a,b);
+    distanciaEntrePuntos(a,b);
 
     return 0;
 }
 
-int numeroEstudiantes(int &n){
-    cout<<"\nIngrese el numero de estudiantes: ";
-    cin>>n;
-
-    if(n<=0){   //no aceptamos numeros menores o iguales a cero
-        cout<<"No es numero valido para registrar.\n";
-        return -1;  //numero de error
-    }
-    return n;   //retorna el numero n valido
+void coordenadasPuntos(Punto &a, Punto &b){
+    cout<<"\nIngrese las coordenadas del primer punto:";
+    cout<<"\nX: "; cin>>a.x;
+    cout<<"Y: "; cin>>a.y;
+    cout<<"Z: "; cin>>a.z;
+    cout<<"Ingrese las coordenadas del segundo punto:";
+    cout<<"\nX: "; cin>>b.x;
+    cout<<"Y: "; cin>>b.y;
+    cout<<"Z: "; cin>>b.z;
 }
 
-Estudiante *registrarEstudiantes(int n){
-    Estudiante *e=new Estudiante[n];
-
-    for(int i=0; i<n; i++){
-        cin.ignore();   //despues de registrar el n y las notas
-        cout<<"Ingrese el nombre del estudiante "<<i+1<<": ";
-        getline(cin,e[i].nombre);
-
-        while(true){    //repite hasta que la nota sea mayor o igual a 0
-            cout<<"Ingrese la nota del estudiante "<<i+1<<": ";
-            cin>>e[i].nota;
-
-            if(e[i].nota<0){
-                cout<<"\nNota no valida. Intentelo de nuevo\n";
-                continue;
-            }
-
-            cout<<endl;
-            break;
-        }
-    }
-
-    return e;
-}
-
-void NotaMasAlta(const Estudiante *e, int n){
-    Estudiante mejor=e[0];
-    for(int i=0; i<n; i++){
-        if(e[i].nota > mejor.nota){
-            mejor=e[i];
-        }
-    }
-
-    cout<<"El estudiante con la mayor nota es:";
-    cout<<" "<<mejor.nombre<<" , Nota: "<<mejor.nota<<endl;
-}
-
-void liberarMemoria(Estudiante *&e){
-    delete[] e;
-    e=nullptr;
+void distanciaEntrePuntos(Punto a, Punto b){
+    float distancia=sqrt(pow(a.x-b.x,2) + pow(a.y-b.y,2) + pow(a.z-b.z,2));
+    cout<<"La distancia entre los dos puntos es: "<<distancia<<endl;
 }
