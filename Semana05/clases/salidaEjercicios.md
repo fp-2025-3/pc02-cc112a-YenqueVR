@@ -11,7 +11,7 @@
 ![alt text](imag/imagen3.png)
 
 ## Ejercicio 4
-
+![alt text](imag/imagen4.png)
 
 ## Ejercicio 5
 
