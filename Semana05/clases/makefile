@@ -5,18 +5,11 @@ CXX := g++
 BASE_FLAGS := -std=c++17 -Wall -Wextra -Wpedantic
 #CXXFLAGS := $(BASE_FLAGS)
 
-# Sistema operativo (Windows / Linux / WSL)
-ifeq ($(OS),Windows_NT)
-    EXEEXT := .exe
-    RM := del /Q
-    MKDIR := mkdir
-	VALGRIND := @echo "Valgrind no disponible en Windows"
-else
-    EXEEXT :=
-    RM := rm -f
-    MKDIR := mkdir -p
-    VALGRIND := valgrind --leak-check=full --show-leak-kinds=all
-endif
+# Sistema operativo Linux
+EXEEXT :=
+RM := rm -f
+MKDIR := mkdir -p
+VALGRIND := valgrind --leak-check=full --show-leak-kinds=all
 
 
 # Archivos fuente del directorio actual (local)
@@ -72,5 +65,5 @@ $(ASAN_DIR)/%$(EXEEXT): %.cpp
 
 # Limpieza
 clean:
-	# $(RM) $(TARGETS)  
+# $(RM) $(TARGETS)  
 	$(RM) -r build
