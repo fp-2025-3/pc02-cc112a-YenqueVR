@@ -13,12 +13,16 @@ struct Seleccion {
 
 Seleccion *generarSelecciones(int n, int pj);
 void tabla(Seleccion *s, int n);
+void ordenarSeleccion(Seleccion *&s, int n);
+void seleccionCampeon(Seleccion *s);
 void liberarMemoria(Seleccion *&s);
 
 int main(){
     int n=5, pj=100;
     Seleccion *sel=generarSelecciones(n,pj);
+    ordenarSeleccion(sel,n);
     tabla(sel,n);
+    seleccionCampeon(sel);
     liberarMemoria(sel);
 
     return 0;
@@ -58,7 +62,23 @@ Seleccion *generarSelecciones(int n, int pj){
     return s;
 }
 
-
+void ordenarSeleccion(Seleccion *&s, int n){
+    for(int i=0; i<n-1; i++){
+        for(int j=0; j<n-i-1; j++){
+            if(s[j].puntaje==s[j+1].puntaje){
+                if(s[j].DG==s[j+1].DG){
+                    if(s[j].GF<s[j+1].GF){
+                        swap(s[j],s[j+1]);
+                    }
+                }else if(s[j].puntaje<s[j+1].puntaje){
+                    swap(s[j],s[j+1]);
+                }
+            }else if(s[j].puntaje<s[j+1].puntaje){
+                swap(s[j],s[j+1]);
+            }
+        }
+    }
+}
 
 void tabla(Seleccion *s, int n){
     cout<<fixed<<setprecision(1);
@@ -76,6 +96,9 @@ void tabla(Seleccion *s, int n){
     cout<<endl;
 }
 
+void seleccionCampeon(Seleccion *s){
+    cout<<"\nCAMPEON: "<<s->nombre<<" | Puntaje: "<<s->puntaje<<" | DG: "<<s->DG<<" | Rendimiento: "<<s->rend<<"%\n";
+}
 void liberarMemoria(Seleccion *&s){
     delete[] s;
     s=nullptr;
