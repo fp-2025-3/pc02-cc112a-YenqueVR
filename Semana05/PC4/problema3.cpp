@@ -22,6 +22,17 @@ int main(){
     Producto *prod=crearInventario(n);
     mostrarInventario(prod,n);
 
+    int codigoBuscado=102;
+    Producto *buscado=buscarProducto(prod,n,codigoBuscado);
+
+    cout<<"\nBuscando producto con codigo "<<codigoBuscado<<"...\n";
+    if(buscado!=nullptr){   //si ha encontrado, entonces
+        cout<<"Producto encontrado: "<<buscado->nombre;
+        cout<<" | Precio: "<<buscado->precio<<endl;
+    }else{
+        cout<<"Producto no encontrado\n";
+    }
+
     return 0;
 }
 
@@ -38,7 +49,7 @@ int numeroProductos(int &n){
 
 Producto crearProducto(int codigo, const char* nombre, double precio, int stock){
     char *t=new char[strlen(nombre)+1]; //asignamos memoria dinamica para el nombre con su caracter nulo
-    strcpy(t,nombre);   //copiamos el nombre en t (mismo tamaño en ambos)
+    strcpy(t,nombre);   //copiamos correctamente el nombre en t (mismo tamaño en ambos)
 
     Producto p{codigo,t,precio,stock};  //inicializamos un producto con los datos dispuestos
     return p;   //retornamos el producto
@@ -89,4 +100,12 @@ void mostrarInventario(Producto *p, int n){
 void mostrarProducto(Producto p){
     cout<<"Codigo: "<<p.codigo<<" | Nombre: "<<p.nombre;
     cout<<" | Precio: "<<p.precio<<" | Stock: "<<p.stock<<endl;
+}
+
+Producto* buscarProducto(Producto *inventario, int n, int codigoBuscado){
+    for(int i=0; i<n; i++){
+        if(inventario[i].codigo==codigoBuscado) return inventario+i;    //retornamos el puntero al producto encontrado
+    }
+
+    return nullptr; //retorna nullptr al no encontrarlo;
 }
