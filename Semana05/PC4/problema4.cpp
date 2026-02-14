@@ -17,6 +17,7 @@ struct Pedido {
 
 Item crearItem(const char *descripcion, int cantidad, double precio);
 Pedido* crearPedido(int numero, const char *cliente, int cantidadItems);
+void mostraPedidoYmas(Pedido *p);
 
 int main(){
     int num=101, cantItems=3;
@@ -31,7 +32,7 @@ Item crearItem(const char *descripcion, int cantidad, double precio){
     char *desc=new char[strlen(descripcion)+1]; //memoria para el nombre del item
     strcpy(desc,descripcion);   //copia segura de descripcion a desc
 
-    Item p{desc,cantidad,precio};
+    Item p{desc,cantidad,precio};   //inicializamos el item con los parametros
     return p;   //retornamos un item inicializado
 }
 
@@ -64,13 +65,27 @@ Pedido* crearPedido(int numero, const char *cliente, int cantidadItems){
         cout<<"Ingrese la cantidad deseada del item "<<i+1<<": ";
         cin>>cantItem;
 
-        if(cin.fail() || cantItem<=0 || precio<=0){     //si los datos estan mal
+        if(cin.fail() || cantItem<=0 || precio<=0){     //si los datos estan mal o fallan
             cin.clear();
             cout<<"\nError al ingresar datos, intentelo de nuevo.\n";
-            continue;
+            continue;   //continua al inicio del bucle en el mismo item
         }
 
         p->items[i]=crearItem(desc,cantItem,precio);    //inicializamos los item con la funcion
         i++;
     }
+}
+
+void mostraPedidoYmas(Pedido *p){
+    cout<<"\nPedido N°: "<<p->numeroPedido;
+    cout<<"\nCliente: "<<p->nombreCliente;
+
+    cout<<"\n\nItems:\n";
+    for(int i=0; i<p->cantidadItems; i++){  //tabla de items
+        cout<<"- "<<p->items[i].descripcion<<" | Cant: "<<p->items[i].cantidad;
+        cout<<" | Precio: "<<p->items[i].precioUnitario<<endl;
+    }
+
+    cout<<"\nTotal: ";
+    cout<<"\n\nItem mas caro: ";
 }
