@@ -34,7 +34,7 @@ int main(){
     mostrarPolinomio(mult);
     cout<<endl;
 
-    liberarCoefPolinomio(p1);
+    liberarCoefPolinomio(p1);   //liberar la memoria dinamica de los coeficientes
     liberarCoefPolinomio(p2);
     liberarCoefPolinomio(p3);
     liberarCoefPolinomio(suma);
@@ -52,9 +52,10 @@ Polinomio sumarTresPolinomios(Polinomio p1, Polinomio p2, Polinomio p3){
     s.coef=new float[s.gradoP+1]{0};    //inicializados en 0 los coeficientes
 
     for(int i=0; i<=s.gradoP; i++){
-        if(p1.gradoP-i<=p1.gradoP && p1.gradoP-i>=0) s.coef[s.gradoP-i]+=p1.coef[p1.gradoP-i]; //suma con coef de p1 si es posible
-        if(p2.gradoP-i<=p2.gradoP && p2.gradoP-i>=0) s.coef[s.gradoP-i]+=p2.coef[p2.gradoP-i]; //suma con coef de p2 si es posible
-        if(p3.gradoP-i<=p3.gradoP && p3.gradoP-i>=0) s.coef[s.gradoP-i]+=p3.coef[p3.gradoP-i]; //suma con coef de p3 si es posible
+        //se suma desde el ultimo indice de cada polinomio hasta su indice 0
+        if(p1.gradoP-i>=0) s.coef[s.gradoP-i]+=p1.coef[p1.gradoP-i]; //suma con coef de p1 si es posible
+        if(p2.gradoP-i>=0) s.coef[s.gradoP-i]+=p2.coef[p2.gradoP-i]; //suma con coef de p2 si es posible
+        if(p3.gradoP-i>=0) s.coef[s.gradoP-i]+=p3.coef[p3.gradoP-i]; //suma con coef de p3 si es posible
     }
 
     return s;   //retornamos una copia del polinomio de suma de los 3 polinomios
@@ -77,6 +78,7 @@ Polinomio multiplicarTresPolinomios(Polinomio p1, Polinomio p2, Polinomio p3){
 }
 
 void mostrarPolinomio(Polinomio p){
+    //muestra primero los coeficientes con mayor grado en x
     for(int i=0; i<=p.gradoP; i++){
         if(p.coef[i]==0) continue;  //continua al siguiente coeficiente
         if(i!=0) cout<<" + ";    //coloca el operador suma
