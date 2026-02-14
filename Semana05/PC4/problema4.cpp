@@ -18,6 +18,7 @@ struct Pedido {
 Item crearItem(const char *descripcion, int cantidad, double precio);
 Pedido* crearPedido(int numero, const char *cliente, int cantidadItems);
 double calcularTotal(const Pedido *p);
+Item *itemMasCaro(Pedido *p);
 void mostraPedidoYmas(const Pedido *p);
 
 int main(){
@@ -89,6 +90,20 @@ double calcularTotal(const Pedido *p){
     return total;   //retorna el total de los items
 }
 
+Item *itemMasCaro(const Pedido *p){
+    double precioMasAlto=-1;    //precio por debajo de 0
+    int indicePrecioMasAlto;    //indice para el item con mayor precio unitario
+
+    for(int i=0; i<p->cantidadItems; i++){
+        if(p->items[i].precioUnitario>precioMasAlto){
+            precioMasAlto=p->items[i].precioUnitario;
+            indicePrecioMasAlto=i;
+        }
+    }
+
+    return (p->items)+indicePrecioMasAlto;  //puntero al item con precio unitario mas alto
+}
+
 void mostraPedidoYmas(const Pedido *p){
     cout<<"\nPedido N°: "<<p->numeroPedido;
     cout<<"\nCliente: "<<p->nombreCliente;
@@ -100,5 +115,8 @@ void mostraPedidoYmas(const Pedido *p){
     }
 
     cout<<"\nTotal: "<<calcularTotal(p);
-    cout<<"\n\nItem mas caro: ";
+
+    Item *IMC=itemMasCaro(p);   //Item Mas Caro
+    cout<<"\n\nItem mas caro: "<<IMC->descripcion<<" | "<<IMC->precioUnitario;
+    cout<<endl;
 }
