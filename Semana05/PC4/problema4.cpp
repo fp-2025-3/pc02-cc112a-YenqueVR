@@ -17,7 +17,8 @@ struct Pedido {
 
 Item crearItem(const char *descripcion, int cantidad, double precio);
 Pedido* crearPedido(int numero, const char *cliente, int cantidadItems);
-void mostraPedidoYmas(Pedido *p);
+double calcularTotal(const Pedido *p);
+void mostraPedidoYmas(const Pedido *p);
 
 int main(){
     int num=101, cantItems=3;
@@ -74,9 +75,21 @@ Pedido* crearPedido(int numero, const char *cliente, int cantidadItems){
         p->items[i]=crearItem(desc,cantItem,precio);    //inicializamos los item con la funcion
         i++;
     }
+
+    return p;   //retorna un puntero a la memoria reservada para el pedido
 }
 
-void mostraPedidoYmas(Pedido *p){
+double calcularTotal(const Pedido *p){
+    double total=0; //el total iniicia en 0
+
+    for(int i=0; i<p->cantidadItems; i++){  //recorre para cada item
+        total+=(p->items[i].cantidad * p->items[i].precioUnitario); //precio y cantidad del item i
+    }
+    
+    return total;   //retorna el total de los items
+}
+
+void mostraPedidoYmas(const Pedido *p){
     cout<<"\nPedido N°: "<<p->numeroPedido;
     cout<<"\nCliente: "<<p->nombreCliente;
 
@@ -86,6 +99,6 @@ void mostraPedidoYmas(Pedido *p){
         cout<<" | Precio: "<<p->items[i].precioUnitario<<endl;
     }
 
-    cout<<"\nTotal: ";
+    cout<<"\nTotal: "<<calcularTotal(p);
     cout<<"\n\nItem mas caro: ";
 }
