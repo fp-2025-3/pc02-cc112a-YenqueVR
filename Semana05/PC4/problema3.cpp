@@ -14,6 +14,8 @@ Producto crearProducto(int codigo, const char* nombre, double precio, int stock)
 Producto* crearInventario(int n);
 void mostrarProducto(Producto p);
 void mostrarInventario(Producto *p, int n);
+Producto* buscarProducto(Producto *inventario, int n, int codigoBuscado);
+void liberarInventario(Producto *&inventario, int n);
 
 int main(){
     int n;
@@ -32,6 +34,8 @@ int main(){
     }else{
         cout<<"Producto no encontrado\n";
     }
+
+    liberarInventario(prod,n);  //liberamos memoria
 
     return 0;
 }
@@ -108,4 +112,14 @@ Producto* buscarProducto(Producto *inventario, int n, int codigoBuscado){
     }
 
     return nullptr; //retorna nullptr al no encontrarlo;
+}
+
+void liberarInventario(Producto *&inventario, int n){
+    for(int i; i<n; i++){
+        delete[] inventario[i].nombre; //liberamos memoria char* que se reservo para el nombre
+        inventario[i].nombre=nullptr;  //evitamos puntero colgante
+    }
+
+    delete[] inventario;    //liberamos memoria del arreglo de productos
+    inventario=nullptr;
 }
