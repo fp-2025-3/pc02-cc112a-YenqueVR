@@ -19,6 +19,7 @@ int buscarProductoPorID(const char* nombreArchivo, int idBuscado);
 void modificarPrecio(const char* nombreArchivo, int id, double nuevoPrecio);
 void eliminarProducto(const char* nombreArchivo, int id);
 double calcularValorInventario(const char* nombreArchivo);
+void presentarProducto(Producto p);
 
 int main(){
 
@@ -69,7 +70,23 @@ void registrarProducto(const char* nombreArchivo){
 }
 
 void mostrarProductos(const char* nombreArchivo){
+    ifstream inv(nombreArchivo);
+    if(!inv){
+        cerr<<"\nEl archivo inventario.dat no pudo abrirse.\n";
+    }
 
+    cout<<"\nPRODUCTOS:\n";
+
+    Producto p;
+    while(inv.read((char*)&p,sizeof(p))){   //lee todos los productos
+        cout<<inv.tellg()-sizeof(p);  //posicion del inicio del producto (tellg muestra pos despues de recorrer p actual)
+        presentarProducto(p);   //muestra el producto
+        cout<<endl;
+    }
+}
+
+void presentarProducto(Producto p){
+    cout<<"ID: "<<p.id<<" | "<<p.nombre<<" | Precio: "<<p.precio<<" | Stock: "<<p.stock;
 }
 
 int buscarProductoPorID(const char* nombreArchivo, int idBuscado){
