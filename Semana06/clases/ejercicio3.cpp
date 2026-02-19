@@ -134,12 +134,20 @@ void modificarPrecio(const char* nombreArchivo, int id, double nuevoPrecio){
     inv.seekg(pos);    //nos posicionamos sobre el registro con acceso aleatorio
     inv.read((char*)&p,sizeof(p));  //leemos el registro donde se modifica el precio
 
+    if(p.precio==nuevoPrecio){
+        cout<<"\nEl producto no esta cambiando de precio realmente. Operacion cancelada.\n";
+        inv.close();    //cerrar el archivo
+        return;
+    }
+
     //modificar el producto en el archivo---------------------------------------
     p.precio=nuevoPrecio;   //modificamos el precio en el registro extraido
     
     inv.seekp(pos);    //nos movemos a la posicion del registro a modificar
     inv.write((char*)&p,sizeof(p));    //modificamos el registro con el precio cambiado
     inv.close();    //cerramos el archivo
+
+    cout<<"\nPrecio del producto ha sido modificado exitosamente.\n";
 }
 
 void eliminarProducto(const char* nombreArchivo, int id){
@@ -174,7 +182,7 @@ void eliminarProducto(const char* nombreArchivo, int id){
     inv.write((char*)&p,sizeof(p));    //modificamos el registro con el activo en falso
     inv.close();    //cerramos el archivo
 
-    cout<<"\nProducto eliminado exitosamente.\n";
+    cout<<"\nProducto eliminado exitosamente.\n";   //mensaje de producto eliminado
 }
 
 double calcularValorInventario(const char* nombreArchivo){
