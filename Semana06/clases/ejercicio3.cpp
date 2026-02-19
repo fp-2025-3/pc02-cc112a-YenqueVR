@@ -59,18 +59,20 @@ void registrarProducto(const char* nombreArchivo){
     p.id=ID;    //registramos el numero de id
     ID++;   //aumentamos el ID en uno
 
-    ofstream inv(nombreArchivo, ios::app | ios::binary);    //abrir el archivo
+    ofstream inv(nombreArchivo, ios::app | ios::binary);    //abrir el archivo y escribir al final
     if(!inv){
         cerr<<"\nEl archivo inventario.dat no pudo abrirse.\n";
         return;
     }
 
     inv.write((char*)&p,sizeof(p)); //escribimos al final del archivo
-    inv.close();
+    inv.close();    //cerrar archivo
+
+    cout<<"\nProducto registrado exitosamente.\n";  //mensaje de producto registrado
 }
 
 void mostrarProductos(const char* nombreArchivo){
-    ifstream inv(nombreArchivo);
+    ifstream inv(nombreArchivo, ios::binary);
     if(!inv){
         cerr<<"\nEl archivo inventario.dat no pudo abrirse.\n";
         return;
@@ -84,6 +86,8 @@ void mostrarProductos(const char* nombreArchivo){
         cout<<" | Pos_Binario: "<<inv.tellg()-sizeof(p);  //posicion del inicio del producto (tellg muestra pos despues de recorrer p actual)
         cout<<endl;
     }
+
+    inv.close();    //cerrar archivo
 }
 
 void presentarProducto(Producto p){
@@ -91,7 +95,7 @@ void presentarProducto(Producto p){
 }
 
 int buscarProductoPorID(const char* nombreArchivo, int idBuscado){
-    ifstream inv(nombreArchivo);
+    ifstream inv(nombreArchivo, ios::binary);
     if(!inv){
         cerr<<"\nEl archivo inventario.dat no pudo abrirse.\n";
         return;
@@ -99,13 +103,43 @@ int buscarProductoPorID(const char* nombreArchivo, int idBuscado){
 
     Producto p; //declarado para almacenar datos
     while(inv.read((char*)&p,sizeof(p))){
-        if(p.id==idBuscado) return inv.tellg()-sizeof(p);   //posicion en el archivo
+        if(p.id==idBuscado){
+            int pos=inv.tellg()-sizeof(p);   //posicion en el archivo
+            inv.close();    //cerramos el archivo
+            return pos;
+        }
     }
+
+    inv.close();    //cerrar archivo
     return -1;  //si no encuentra, devuelve -1
 }
 
 void modificarPrecio(const char* nombreArchivo, int id, double nuevoPrecio){
+    //encontrar y extraer el producto en el archivo---------------------------------
+    fstream inv(nombreArchivo, ios:: in | ios::out | ios::binary);
+    if(!inv){
+        cerr<<"\nEl archivo inventario.dat no pudo abrirse.\n";
+        return;
+    }
 
+    int pos=buscarProductoPorID(nombreArchivo,id);  //usado para encontrar el registro, y leer y escribir
+
+    if(pos==-1){
+        cerr<<"\nProducto no encontrado.\n";
+        inv.close();    //cerrar archivo
+        return;
+    }
+
+    Producto p; //Producto que almacenara los datos modificados
+    inv.seekg(pos);    //nos posicionamos sobre el registro con acceso aleatorio
+    inv.read((char*)&p,sizeof(p));  //leemos el registro donde se modifica el precio
+
+    //modificar el producto en el archivo---------------------------------------
+    p.precio=nuevoPrecio;   //modificamos el precio en el registro extraido
+    
+    inv.seekp(pos);    //nos movemos a la posicion del registro a modificar
+    inv.write((char*)&p,sizeof(p));    //modificamos el registro con el precio cambiado
+    inv.close();    //cerramos el archivo
 }
 
 void eliminarProducto(const char* nombreArchivo, int id){
