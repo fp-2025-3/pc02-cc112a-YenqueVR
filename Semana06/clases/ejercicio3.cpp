@@ -13,17 +13,71 @@ struct Producto {
 
 int ID=100;
 
+int menu(int &opc);
+void sistema(const char *nombreArchivo);
 void registrarProducto(const char* nombreArchivo);
 void mostrarProductos(const char* nombreArchivo);
 int buscarProductoPorID(const char* nombreArchivo, int idBuscado);
 void modificarPrecio(const char* nombreArchivo, int id, double nuevoPrecio);
 void eliminarProducto(const char* nombreArchivo, int id);
 double calcularValorInventario(const char* nombreArchivo);
-void presentarProducto(Producto p);
+void presentarProducto(Producto p, int pos);
 
 int main(){
-
+    char archivo[]="output/inventario.dat";
+    sistema(archivo);
     return 0;
+}
+
+void sistema(const char *nombreArchivo){
+    int opc, id;
+    double nuevoPrecio, valorInv;
+    
+    do{
+        switch(menu(opc)){
+            case 1: registrarProducto(nombreArchivo);   //registrar un producto
+            break;
+            //=======================================================================================================
+            case 2: mostrarProductos(nombreArchivo);    //mostrar los productos activos
+            break;
+            //=======================================================================================================
+            case 3: //busqueda por ID
+            cout<<"\nIngrese el ID buscado: "; cin>>id;
+            if(buscarProductoPorID(nombreArchivo,id)==-1) cout<<"\nBuscar Producto por ID cancelado.\n"; //si no lo encuentra
+            break;
+            //===========================================================================================================
+            case 4: //modificar precio de un producto
+            cout<<"\nIngrese el ID del producto: "; cin>>id;
+            cout<<"Ingrese el nuevo precio del producto: "; cin>>nuevoPrecio;
+            if(nuevoPrecio<=0){
+                cout<<"\nEl precio debe ser mayor a 0. Modificar precio cancelado.\n";
+                break;
+            }
+            modificarPrecio(nombreArchivo,id,nuevoPrecio);
+            break;
+            //===========================================================================================================
+            case 5: //eliminar un producto
+            cout<<"\nIngrese el ID del producto a eliminar: "; cin>>id;
+            eliminarProducto(nombreArchivo,id);
+            break;
+            //===========================================================================================================
+            case 6: //calcular el valor total de los productos no eliminados
+            valorInv=calcularValorInventario(nombreArchivo);
+            if(valorInv==-1) break;
+            cout<<"\nEl valor total del inventario es: "<<valorInv;
+            cout<<endl;
+            break;
+            //===========================================================================================================
+            case 7: cout<<"\nSaliendo...\n";    //salir del programa
+            break;
+            //===========================================================================================================
+            default: cout<<"\nOpcion no valida\n";  //continua en bucle para opc no validos
+            break;
+        }
+
+
+    }while(opc!=7);
+    cout<<"\nHa salido del programa.\n";
 }
 
 void registrarProducto(const char* nombreArchivo){
@@ -43,7 +97,7 @@ void registrarProducto(const char* nombreArchivo){
         return;
     }
 
-    cout<<"Ingrese el precio del producto (precio>0) ";
+    cout<<"Ingrese el precio del producto (precio>0): ";
     cin>>p.precio;
     cout<<"Ingrese el stock del producto (stock>=0): ";
     cin>>p.stock;
@@ -82,16 +136,19 @@ void mostrarProductos(const char* nombreArchivo){
 
     Producto p;
     while(inv.read((char*)&p,sizeof(p))){   //lee todos los productos
-        presentarProducto(p);   //muestra el producto
-        cout<<" | Pos_Binario: "<<inv.tellg()-sizeof(p);  //posicion del inicio del producto (tellg muestra pos despues de recorrer p actual)
-        cout<<endl;
+        if(p.activo){   //solo si no estan eliminados
+            int pos=inv.tellg();
+            pos-=sizeof(p); //tellg - sizeof muestra pos despues de recorrer p actual
+            presentarProducto(p,pos);   //muestra el producto
+        }
     }
 
     inv.close();    //cerrar archivo
 }
 
-void presentarProducto(Producto p){
+void presentarProducto(Producto p, int pos){
     cout<<"ID: "<<p.id<<" | "<<p.nombre<<" | Precio: "<<p.precio<<" | Stock: "<<p.stock;
+    cout<<" | Pos_Binario: "<<pos<<endl;  //posicion del inicio del producto
 }
 
 int buscarProductoPorID(const char* nombreArchivo, int idBuscado){
@@ -104,12 +161,16 @@ int buscarProductoPorID(const char* nombreArchivo, int idBuscado){
     Producto p; //declarado para almacenar datos
     while(inv.read((char*)&p,sizeof(p))){
         if(p.id==idBuscado){
-            int pos=inv.tellg()-sizeof(p);   //posicion en el archivo
+            int pos=inv.tellg();
+            pos-=sizeof(p);   //posicion en el archivo
+            cout<<"\nProducto encontrado:\n";
+            presentarProducto(p,pos);   //presentamos el producto encontrado
             inv.close();    //cerramos el archivo
             return pos;
         }
     }
 
+    cout<<"\nProducto no encontrado.\n";
     inv.close();    //cerrar archivo
     return -1;  //si no encuentra, devuelve -1
 }
@@ -125,7 +186,7 @@ void modificarPrecio(const char* nombreArchivo, int id, double nuevoPrecio){
     int pos=buscarProductoPorID(nombreArchivo,id);  //usado para encontrar el registro, y leer y escribir
 
     if(pos==-1){
-        cerr<<"\nProducto no encontrado. Modificar precio cancelado\n";
+        cerr<<"\nModificar precio cancelado\n";
         inv.close();    //cerrar archivo
         return;
     }
@@ -161,7 +222,7 @@ void eliminarProducto(const char* nombreArchivo, int id){
     int pos=buscarProductoPorID(nombreArchivo,id);  //usado para encontrar el registro, y leer y escribir
 
     if(pos==-1){
-        cerr<<"\nProducto no encontrado. Eliminar producto cancelado.\n";
+        cerr<<"\nEliminar producto cancelado.\n";
         inv.close();    //cerrar archivo
         return;
     }
@@ -206,6 +267,7 @@ double calcularValorInventario(const char* nombreArchivo){
 }
 
 int menu(int &opc){
+    cout<<"\n========================================\n";
     cout<<"\n1. Registrar producto";
     cout<<"\n2. Mostrar productos";
     cout<<"\n3. Buscar producto";
@@ -215,4 +277,13 @@ int menu(int &opc){
     cout<<"\n7. Salir";
     cout<<"\nOpcion --> ";
     cin>>opc;
+    cout<<"\n========================================";
+
+    if(cin.fail()){
+        cin.clear();
+        cin.ignore(50,'\n');
+        opc=-1; //numero de fallo
+    }
+
+    return opc;
 }
