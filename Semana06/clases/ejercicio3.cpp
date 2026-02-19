@@ -39,7 +39,7 @@ void registrarProducto(const char* nombreArchivo){
     }
 
     if(strlen(p.nombre)==0){    //cuando no se escribio nada y solo enter
-        cerr<<"\nNo tiene nombre registrado. No registrado.\n";
+        cerr<<"\nNo tiene un nombre registrado. Registrar producto cancelado.\n";
         return;
     }
 
@@ -49,7 +49,7 @@ void registrarProducto(const char* nombreArchivo){
     cin>>p.stock;
 
     if(cin.fail() || p.precio<=0 || p.stock<0){ //si falla en registrar o validar
-        cerr<<"\nDatos mal ingresados. No registrado.\n";
+        cerr<<"\nDatos mal ingresados. Registrar producto cancelado.\n";
         cin.clear();    //limpiar estado
         cin.ignore(50,'\n');    //avanzar en buffer, 
         return; //salir de la funcion de registrar
@@ -61,7 +61,7 @@ void registrarProducto(const char* nombreArchivo){
 
     ofstream inv(nombreArchivo, ios::app | ios::binary);    //abrir el archivo y escribir al final
     if(!inv){
-        cerr<<"\nEl archivo inventario.dat no pudo abrirse.\n";
+        cerr<<"\nEl archivo inventario.dat no pudo abrirse. Registrar producto cancelado.\n";
         return;
     }
 
@@ -74,7 +74,7 @@ void registrarProducto(const char* nombreArchivo){
 void mostrarProductos(const char* nombreArchivo){
     ifstream inv(nombreArchivo, ios::binary);
     if(!inv){
-        cerr<<"\nEl archivo inventario.dat no pudo abrirse.\n";
+        cerr<<"\nEl archivo inventario.dat no pudo abrirse. Mostrar producto cancelado.\n";
         return;
     }
 
@@ -97,8 +97,8 @@ void presentarProducto(Producto p){
 int buscarProductoPorID(const char* nombreArchivo, int idBuscado){
     ifstream inv(nombreArchivo, ios::binary);
     if(!inv){
-        cerr<<"\nEl archivo inventario.dat no pudo abrirse.\n";
-        return;
+        cerr<<"\nEl archivo inventario.dat no pudo abrirse. Operacion cancelada\n";
+        return -1;
     }
 
     Producto p; //declarado para almacenar datos
@@ -125,7 +125,7 @@ void modificarPrecio(const char* nombreArchivo, int id, double nuevoPrecio){
     int pos=buscarProductoPorID(nombreArchivo,id);  //usado para encontrar el registro, y leer y escribir
 
     if(pos==-1){
-        cerr<<"\nProducto no encontrado.\n";
+        cerr<<"\nProducto no encontrado. Modificar precio cancelado\n";
         inv.close();    //cerrar archivo
         return;
     }
@@ -135,7 +135,7 @@ void modificarPrecio(const char* nombreArchivo, int id, double nuevoPrecio){
     inv.read((char*)&p,sizeof(p));  //leemos el registro donde se modifica el precio
 
     if(p.precio==nuevoPrecio){
-        cout<<"\nEl producto no esta cambiando de precio realmente. Operacion cancelada.\n";
+        cout<<"\nEl producto no esta cambiando de precio realmente. Modificar precio cancelado.\n";
         inv.close();    //cerrar el archivo
         return;
     }
@@ -151,16 +151,17 @@ void modificarPrecio(const char* nombreArchivo, int id, double nuevoPrecio){
 }
 
 void eliminarProducto(const char* nombreArchivo, int id){
+    //encontrar y extraer el producto en el archivo---------------------------------
     fstream inv(nombreArchivo, ios::in | ios::out | ios::binary);   //leer y escribir en binario
     if(!inv){
-        cerr<<"\nEl archivo inventario.dat no pudo abrirse.\n";
+        cerr<<"\nEl archivo inventario.dat no pudo abrirse. Eliminar producto cancelado.\n";
         return;
     }
 
     int pos=buscarProductoPorID(nombreArchivo,id);  //usado para encontrar el registro, y leer y escribir
 
     if(pos==-1){
-        cerr<<"\nProducto no encontrado. Asegurese de ingresar bien los datos\n";
+        cerr<<"\nProducto no encontrado. Eliminar producto cancelado.\n";
         inv.close();    //cerrar archivo
         return;
     }
@@ -170,7 +171,7 @@ void eliminarProducto(const char* nombreArchivo, int id){
     inv.read((char*)&p,sizeof(p));  //leemos el registro donde se modifica el activo
 
     if(!p.activo){
-        cout<<"\nEl producto estaba eliminado. Operacion cancelada.\n";
+        cout<<"\nEl producto estaba eliminado. Eliminar producto cancelado.\n";
         inv.close();    //cerrar el archivo
         return;
     }
@@ -186,7 +187,22 @@ void eliminarProducto(const char* nombreArchivo, int id){
 }
 
 double calcularValorInventario(const char* nombreArchivo){
+    ifstream inv(nombreArchivo, ios::binary);   //leer y escribir en binario
+    if(!inv){
+        cerr<<"\nEl archivo inventario.dat no pudo abrirse. Calcular valor inventario cancelado.\n";
+        return -1;
+    }
 
+    Producto p; //declarado para almacenar datos
+    float suma=0;
+    while(inv.read((char*)&p,sizeof(p))){
+        if(p.activo){   //para los que no estan eliminados
+            suma+=(p.precio * p.stock);
+        }
+    }
+
+    inv.close();
+    return suma;
 }
 
 int menu(int &opc){
