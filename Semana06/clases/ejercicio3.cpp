@@ -1,4 +1,5 @@
 #include<iostream>
+#include<cstring>
 #include<fstream>
 using namespace std;
 
@@ -9,6 +10,8 @@ struct Producto {
     int stock;          // Cantidad disponible
     bool activo;        // true = activo, false = eliminado lógicamente
 };
+
+int ID=100;
 
 void registrarProducto(const char* nombreArchivo);
 void mostrarProductos(const char* nombreArchivo);
@@ -23,7 +26,46 @@ int main(){
 }
 
 void registrarProducto(const char* nombreArchivo){
+    ofstream inv(nombreArchivo, ios::app | ios::binary);
+    if(!inv){
+        cerr<<"\nEl archivo inventario.dat no pudo abrirse.\n";
+        return;
+    }
 
+    Producto p;
+    cin.ignore(50,'\n');    //despues de registrar cin>>opc o cin.fail
+
+    cout<<"\nIngrese el nombre del producto: ";
+    cin.getline(p.nombre,30);
+
+    if(cin.fail()){ //si se escribe mas de 30 caracteres, queda sobrante en buffer
+        cin.clear();
+        cin.ignore(50,'\n');
+    }
+
+    if(strlen(p.nombre)==0){    //cuando no se escribio nada y solo enter
+        cerr<<"\nNo tiene nombre registrado. No registrado.\n";
+        return;
+    }
+
+    cout<<"Ingrese el precio del producto (precio>0) ";
+    cin>>p.precio;
+    cout<<"Ingrese el stock del producto (stock>=0): ";
+    cin>>p.stock;
+
+    if(cin.fail() || p.precio<=0 || p.stock<0){ //si falla en registrar o validar
+        cerr<<"\nDatos mal ingresados. No registrado.\n";
+        cin.clear();    //limpiar estado
+        cin.ignore(50,'\n');    //avanzar en buffer, 
+        return; //salir de la funcion de registrar
+    }
+
+    p.activo=true;  //actualizamos a verdadero
+    p.id=ID;    //registramos el numero de id
+    ID++;   //aumentamos el ID en uno
+
+    inv.write((char*)&p,sizeof(p)); //escribimos al final del archivo
+    inv.close();
 }
 
 void mostrarProductos(const char* nombreArchivo){
