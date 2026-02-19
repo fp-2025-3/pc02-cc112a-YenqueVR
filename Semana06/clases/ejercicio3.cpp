@@ -27,13 +27,7 @@ int main(){
 }
 
 void registrarProducto(const char* nombreArchivo){
-    ofstream inv(nombreArchivo, ios::app | ios::binary);
-    if(!inv){
-        cerr<<"\nEl archivo inventario.dat no pudo abrirse.\n";
-        return;
-    }
-
-    Producto p;
+    Producto p; //declaramos para almacenar datos
     cin.ignore(50,'\n');    //despues de registrar cin>>opc o cin.fail
 
     cout<<"\nIngrese el nombre del producto: ";
@@ -65,6 +59,12 @@ void registrarProducto(const char* nombreArchivo){
     p.id=ID;    //registramos el numero de id
     ID++;   //aumentamos el ID en uno
 
+    ofstream inv(nombreArchivo, ios::app | ios::binary);    //abrir el archivo
+    if(!inv){
+        cerr<<"\nEl archivo inventario.dat no pudo abrirse.\n";
+        return;
+    }
+
     inv.write((char*)&p,sizeof(p)); //escribimos al final del archivo
     inv.close();
 }
@@ -73,14 +73,15 @@ void mostrarProductos(const char* nombreArchivo){
     ifstream inv(nombreArchivo);
     if(!inv){
         cerr<<"\nEl archivo inventario.dat no pudo abrirse.\n";
+        return;
     }
 
     cout<<"\nPRODUCTOS:\n";
 
     Producto p;
     while(inv.read((char*)&p,sizeof(p))){   //lee todos los productos
-        cout<<inv.tellg()-sizeof(p);  //posicion del inicio del producto (tellg muestra pos despues de recorrer p actual)
         presentarProducto(p);   //muestra el producto
+        cout<<" | Pos_Binario: "<<inv.tellg()-sizeof(p);  //posicion del inicio del producto (tellg muestra pos despues de recorrer p actual)
         cout<<endl;
     }
 }
@@ -90,7 +91,17 @@ void presentarProducto(Producto p){
 }
 
 int buscarProductoPorID(const char* nombreArchivo, int idBuscado){
+    ifstream inv(nombreArchivo);
+    if(!inv){
+        cerr<<"\nEl archivo inventario.dat no pudo abrirse.\n";
+        return;
+    }
 
+    Producto p; //declarado para almacenar datos
+    while(inv.read((char*)&p,sizeof(p))){
+        if(p.id==idBuscado) return inv.tellg()-sizeof(p);   //posicion en el archivo
+    }
+    return -1;  //si no encuentra, devuelve -1
 }
 
 void modificarPrecio(const char* nombreArchivo, int id, double nuevoPrecio){
