@@ -116,7 +116,7 @@ int buscarProductoPorID(const char* nombreArchivo, int idBuscado){
 
 void modificarPrecio(const char* nombreArchivo, int id, double nuevoPrecio){
     //encontrar y extraer el producto en el archivo---------------------------------
-    fstream inv(nombreArchivo, ios:: in | ios::out | ios::binary);
+    fstream inv(nombreArchivo, ios:: in | ios::out | ios::binary);  //leer y escribir en binario
     if(!inv){
         cerr<<"\nEl archivo inventario.dat no pudo abrirse.\n";
         return;
@@ -143,7 +143,38 @@ void modificarPrecio(const char* nombreArchivo, int id, double nuevoPrecio){
 }
 
 void eliminarProducto(const char* nombreArchivo, int id){
+    fstream inv(nombreArchivo, ios::in | ios::out | ios::binary);   //leer y escribir en binario
+    if(!inv){
+        cerr<<"\nEl archivo inventario.dat no pudo abrirse.\n";
+        return;
+    }
 
+    int pos=buscarProductoPorID(nombreArchivo,id);  //usado para encontrar el registro, y leer y escribir
+
+    if(pos==-1){
+        cerr<<"\nProducto no encontrado. Asegurese de ingresar bien los datos\n";
+        inv.close();    //cerrar archivo
+        return;
+    }
+
+    Producto p; //Producto que almacenara los datos modificados
+    inv.seekg(pos);    //nos posicionamos sobre el registro con acceso aleatorio
+    inv.read((char*)&p,sizeof(p));  //leemos el registro donde se modifica el activo
+
+    if(!p.activo){
+        cout<<"\nEl producto estaba eliminado. Operacion cancelada.\n";
+        inv.close();    //cerrar el archivo
+        return;
+    }
+
+    //modificar el producto en el archivo---------------------------------------
+    p.activo=false;   //modificamos el activo a falso en el registro extraido
+    
+    inv.seekp(pos);    //nos movemos a la posicion del registro a modificar
+    inv.write((char*)&p,sizeof(p));    //modificamos el registro con el activo en falso
+    inv.close();    //cerramos el archivo
+
+    cout<<"\nProducto eliminado exitosamente.\n";
 }
 
 double calcularValorInventario(const char* nombreArchivo){
