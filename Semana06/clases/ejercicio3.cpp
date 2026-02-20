@@ -3,6 +3,9 @@
 #include<fstream>
 using namespace std;
 
+//El sistema hace uso de cin.ignore y validaciones como cin.fail para tratar la contaminacion de otros
+//caracteres y evitar caer en bucle por dato mal ingresado, soportado hasta 200 caracteres en cada ingreso
+
 struct Producto {
     int id;             // Identificador único
     char nombre[30];    // Nombre del producto
@@ -11,8 +14,9 @@ struct Producto {
     bool activo;        // true = activo, false = eliminado lógicamente
 };
 
-int ID=100;
+const int ID=100; //ID base
 
+int asignarID(const char* nombreArchivo);
 int menu(int &opc);
 void sistema(const char *nombreArchivo);
 void registrarProducto(const char* nombreArchivo);
@@ -44,7 +48,7 @@ int menu(int &opc){  //reposicionamiento en codigo de menu
 
     if(cin.fail() || opc<=0 || opc>7){
         cin.clear();
-        cin.ignore(50,'\n');
+        cin.ignore(200,'\n');
         opc=-1; //numero de fallo
     }
 
@@ -58,7 +62,7 @@ void sistema(const char *nombreArchivo){
     do{
         switch(menu(opc)){
             case 1: 
-            cin.ignore(50,'\n');    //despues de registrar cin>>opc y borrar sobrantes no detectados
+            cin.ignore(200,'\n');    //despues de registrar cin>>opc y borrar sobrantes no detectados
             registrarProducto(nombreArchivo);   //registrar un producto
             break;
             //=======================================================================================================
@@ -66,8 +70,8 @@ void sistema(const char *nombreArchivo){
             break;
             //=======================================================================================================
             case 3: //busqueda por ID
-            cin.ignore(50,'\n');    //limpiar buffer si queda sobrantes despues de opc
-            cout<<"\nIngrese el ID buscado (ID>0): "; cin>>id;
+            cin.ignore(200,'\n');    //limpiar buffer si queda sobrantes despues de opc
+            cout<<"\nIngrese el ID buscado (ID>=0): "; cin>>id;
             if(cin.fail() || id<0){
                 cerr<<"\nDatos mal ingresados. Buscar Producto por ID cancelado.\n";
                 cin.clear();    //limpiar estado
@@ -80,7 +84,7 @@ void sistema(const char *nombreArchivo){
             break;
             //===========================================================================================================
             case 4: //modificar precio de un producto
-            cin.ignore(50,'\n'); //limpiar buffer
+            cin.ignore(200,'\n'); //limpiar buffer
             cout<<"\nIngrese el ID del producto (ID>=0): "; cin>>id;
             cout<<"Ingrese el nuevo precio del producto (precio>0): "; cin>>nuevoPrecio;
             if(cin.fail() || id<0 || nuevoPrecio<=0){
@@ -92,8 +96,8 @@ void sistema(const char *nombreArchivo){
             break;
             //===========================================================================================================
             case 5: //eliminar un producto
-            cin.ignore(50,'\n'); //limpiar buffer
-            cout<<"\nIngrese el ID del producto a eliminar: "; cin>>id;
+            cin.ignore(200,'\n'); //limpiar buffer
+            cout<<"\nIngrese el ID del producto a eliminar(ID>=0): "; cin>>id;
             if(cin.fail() || id<0){
                 cerr<<"\nDatos mal ingresados. Modificar precio cancelado.\n";
                 cin.clear();    //limpiar estado
@@ -115,9 +119,25 @@ void sistema(const char *nombreArchivo){
             default: cout<<"\nOpcion no valida\n";  //continua en bucle para opc no validos
             break;
         }
-        cin.ignore(50,'\n');    //avanzar en buffer para borrar caracteres sobrantes o erroneos
+        //para evitar doble cin.ignore cuando opc falla o getline solo capta '\n'
+        if(opc!=-1 && opc!=1) cin.ignore(200,'\n');    //avanzar en buffer para borrar caracteres sobrantes o erroneos
     }while(opc!=7);
     cout<<"\nHa salido del programa.\n";
+}
+
+int asignarID(const char* nombreArchivo){
+    ifstream inv(nombreArchivo, ios::binary);
+    if(!inv){
+        cerr<<"\nEl archivo inventario.dat no pudo abrirse. Asignar ID cancelado.\n";
+        return -1;
+    }
+
+    int i=0;    //contador de estructuras presentes. Utilizado para hacer el ID automatico
+    //Producto p: creado para contar el numero de estructuras presentes
+    for(Producto p; inv.read((char*)&p,sizeof(p)); i++);    //cuenta las estructuras encontradas
+
+    inv.close();    //cerrar archivo
+    return ID+i;   //ID base + el numero de estructuras/ el primer registro el id es 100
 }
 
 void registrarProducto(const char* nombreArchivo){
@@ -126,14 +146,15 @@ void registrarProducto(const char* nombreArchivo){
     cout<<"\nIngrese el nombre del producto: ";
     cin.getline(p.nombre,30);
 
-    if(cin.fail()){ //si se escribe mas de 30 caracteres, queda sobrante en buffer
+    if(strlen(p.nombre)==0){    //cuando no se escribio nada y solo enter, no llevara cin.ignore por que lo detiene
         cin.clear();
-        cin.ignore(50,'\n');
-    }
-
-    if(strlen(p.nombre)==0){    //cuando no se escribio nada y solo enter
         cerr<<"\nNo tiene un nombre registrado. Registrar producto cancelado.\n";
         return;
+    }
+
+    if(cin.fail()){ //si se escribe mas de 30 caracteres, queda sobrante en buffer
+        cin.clear();
+        cin.ignore(200,'\n');
     }
 
     cout<<"Ingrese el precio del producto (precio>0): ";
@@ -144,18 +165,21 @@ void registrarProducto(const char* nombreArchivo){
     if(cin.fail() || p.precio<=0 || p.stock<0){ //si falla en registrar o validar
         cerr<<"\nDatos mal ingresados. Registrar producto cancelado.\n";
         cin.clear();    //limpiar estado
+        cin.ignore(200,'\n');   //no limpiara despues de salir del switch
         return; //salir de la funcion de registrar
     }
 
-    p.activo=true;  //actualizamos a verdadero
-    p.id=ID;    //registramos el numero de id
-    ID++;   //aumentamos el ID en uno
-
+    //creamos primero el archivo si no habia para que haya archivo que analizar en asignarID
     ofstream inv(nombreArchivo, ios::app | ios::binary);    //abrir el archivo y escribir al final
     if(!inv){
         cerr<<"\nEl archivo inventario.dat no pudo abrirse. Registrar producto cancelado.\n";
         return;
     }
+
+    p.id=asignarID(nombreArchivo);  //asignamos un ID unico al producto
+    if(p.id==-1) return;    //si no abrio el archivo, no genera ID y por tanto tampoco producto
+
+    p.activo=true;  //actualizamos a verdadero
 
     inv.write((char*)&p,sizeof(p)); //escribimos al final del archivo
     inv.close();    //cerrar archivo
