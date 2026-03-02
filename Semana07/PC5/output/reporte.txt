@@ -3,12 +3,12 @@
 Total de registros: 150
 
 MONTO TOTAL VENDIDO:
-S/. 3.77068e+006
+S/. 3770676.1
 
 -------------------------------------
 VENDEDOR CON MAYOR RECAUDACION:
 ID vendedor: 4
-Total vendido: S/. 648800
+Total vendido: S/. 648799.8
 
 -------------------------------------
 PRODUCTO MAS VENDIDO:

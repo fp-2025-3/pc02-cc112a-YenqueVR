@@ -44,6 +44,7 @@ void generarReporte(const char *nombre, int numRegistros){
     reporte<<"=== REPORTE GENERAL DE VENTAS ===\n";
     reporte<<"\nTotal de registros: "<<numRegistros<<endl;
 
+    reporte<<fixed<<setprecision(1);
     calcularMontoTotalVendido(reporte,ventas,numRegistros);
     vendedorMayorRecaudacion(reporte,ventas,numRegistros);
     productoMayorVendido(reporte,ventas,numRegistros);
