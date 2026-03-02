@@ -14,6 +14,7 @@ struct Venta {
 int numeroRegistrosArchivo(const char *nombre);
 Venta* extraerRegistrosArchivoBinario(const char *nombre, int n);
 void calcularMontoTotalVendido(ofstream &reporte, const Venta *v, int n);
+void vendedorMayorRecaudacion(ofstream &reporte, const Venta *v, int n);
 void generarReporte(const char *nombre, int numEmpleados);
 
 int main(){
@@ -31,8 +32,12 @@ void generarReporte(const char *nombre, int numEmpleados){
         return;
     }
 
+    Venta *ventas=extraerRegistrosArchivoBinario(nombre,numEmpleados);
+
     reporte<<"=== REPORTE GENERAL DE VENTAS ===\n";
     reporte<<"\nTotal de registros: "<<numEmpleados<<endl;
+
+    calcularMontoTotalVendido(reporte,ventas,numEmpleados);
 
 }
 
@@ -75,3 +80,35 @@ void calcularMontoTotalVendido(ofstream &reporte, const Venta *v, int n){
     reporte<<"\nS/. "<<montoTotal<<endl;
 }
 
+void vendedorMayorRecaudacion(ofstream &reporte, const Venta *v, int n){
+    int numVendedores=-1;    //los ID comienzan a partir de 1 hacia adelante
+    for(int i=0; i<n; i++){
+        if(numVendedores<v[i].idVendedor) numVendedores=v[i].idVendedor;    //el mayor id de un vendedor = numero vendedores
+    }
+
+    //espacio de memoria para la recaudcion de cada vendedor iniciado en 0
+    double *recaudacionVendedor = new double[numVendedores]{0};
+
+    for(int i=0; i<n; i++){ //completamos la recaudacion de cada vendedor
+        recaudacionVendedor[v[i].idVendedor - 1] += (v[i].precioUnitario * v[i].cantidad);
+    }
+
+    int idMejorRecaudador=-1;
+    double montoMejorRecaudador=-1;
+
+    for(int i=0; i<numVendedores; i++){
+        if(montoMejorRecaudador<recaudacionVendedor[i]){
+            montoMejorRecaudador<recaudacionVendedor[i];    //actualizar el monto del mejor recaudador
+            idMejorRecaudador=i+1;  //actualizar id del mejor recaudador
+        }
+    }
+
+    delete[] recaudacionVendedor;   //liberar memoria
+    recaudacionVendedor=nullptr;
+
+    //escritura en el archivo
+    reporte<<"\n-------------------------------------";
+    reporte<<"\nVENDEDOR CON MAYOR RECAUDACION:";
+    reporte<<"\nID vendedor: "<<idMejorRecaudador;
+    reporte<<"\nTotal vendido: S/. "<<montoMejorRecaudador<<endl;
+}
