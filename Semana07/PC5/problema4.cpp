@@ -12,6 +12,9 @@ struct Venta {
 };
 
 int numeroRegistrosArchivo(const char *nombre);
+Venta* extraerRegistrosArchivoBinario(const char *nombre, int n);
+void calcularMontoTotalVendido(ofstream &reporte, const Venta *v, int n);
+void generarReporte(const char *nombre, int numEmpleados);
 
 int main(){
     char nombre[]="input/ventas.dat";
@@ -22,14 +25,15 @@ int main(){
 void generarReporte(const char *nombre, int numEmpleados){
     if(numEmpleados==-1) return;
 
-    ofstream reporte(nombre, ios::binary);
+    ofstream reporte(nombre);
     if(!reporte){
         cerr<<"\nNo se abrio correctamente input/ventas.dat.\n";
         return;
     }
 
     reporte<<"=== REPORTE GENERAL DE VENTAS ===\n";
-    reporte<<"\nTotal de registros: ";
+    reporte<<"\nTotal de registros: "<<numEmpleados<<endl;
+
 }
 
 int numeroRegistrosArchivo(const char *nombre){
@@ -59,13 +63,15 @@ Venta* extraerRegistrosArchivoBinario(const char *nombre, int n){
     return v;
 }
 
-double calcularMontoTotalVendido(const Venta *v, int n){
+void calcularMontoTotalVendido(ofstream &reporte, const Venta *v, int n){
     double montoTotal=0;
 
     for(int i=0; i<n; i++){
         montoTotal += v[i].cantidad * v[i].precioUnitario;  //monto total de cada registro
     }
 
-    return montoTotal;
+    //escritura en el archivo
+    reporte<<"\nMONTO TOTAL VENDIDO:";
+    reporte<<"\nS/. "<<montoTotal<<endl;
 }
 
