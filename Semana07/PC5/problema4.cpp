@@ -6,7 +6,7 @@ using namespace std;
 struct Venta {
     int idVenta;
     int idVendedor;
-    int Producto;
+    int idProducto;
     int cantidad;
     double precioUnitario;
 };
@@ -98,7 +98,7 @@ void vendedorMayorRecaudacion(ofstream &reporte, const Venta *v, int n){
 
     for(int i=0; i<numVendedores; i++){
         if(montoMejorRecaudador<recaudacionVendedor[i]){
-            montoMejorRecaudador<recaudacionVendedor[i];    //actualizar el monto del mejor recaudador
+            montoMejorRecaudador=recaudacionVendedor[i];    //actualizar el monto del mejor recaudador
             idMejorRecaudador=i+1;  //actualizar id del mejor recaudador
         }
     }
@@ -111,4 +111,36 @@ void vendedorMayorRecaudacion(ofstream &reporte, const Venta *v, int n){
     reporte<<"\nVENDEDOR CON MAYOR RECAUDACION:";
     reporte<<"\nID vendedor: "<<idMejorRecaudador;
     reporte<<"\nTotal vendido: S/. "<<montoMejorRecaudador<<endl;
+}
+
+void productoMayorVendido(ofstream &reporte, const Venta *v, int n){
+    int numProductos=-1;    //los ID comienzan a partir de 1 hacia adelante
+    for(int i=0; i<n; i++){
+        if(numProductos<v[i].idProducto) numProductos=v[i].idProducto;    //el mayor id de un prducto = numero productos
+    }
+
+    //espacio de memoria para las unidades de productos iniciado en 0
+    int *unidadesProducto = new int[numProductos]{0};
+
+    for(int i=0; i<n; i++){ //completamos las unidades de cada producto
+        unidadesProducto[v[i].idProducto - 1] += v[i].cantidad;
+    }
+
+    int idMejorVendido=-1, mayorUnidadesVendidas=-1;
+
+    for(int i=0; i<numProductos; i++){
+        if(mayorUnidadesVendidas<unidadesProducto[i]){
+            mayorUnidadesVendidas=unidadesProducto[i];    //actualizar las unidades del producto mas vendido
+            idMejorVendido=i+1;  //actualizar id del producto mas vendido
+        }
+    }
+
+    delete[] unidadesProducto;   //liberar memoria
+    unidadesProducto=nullptr;
+
+    //escritura en el archivo
+    reporte<<"\n-------------------------------------";
+    reporte<<"\nPRODUCTO MAS VENDIDO:";
+    reporte<<"\nID Producto: "<<idMejorVendido;
+    reporte<<"\nTotal unidades: "<<mayorUnidadesVendidas<<endl;
 }
