@@ -15,30 +15,44 @@ int numeroRegistrosArchivo(const char *nombre);
 Venta* extraerRegistrosArchivoBinario(const char *nombre, int n);
 void calcularMontoTotalVendido(ofstream &reporte, const Venta *v, int n);
 void vendedorMayorRecaudacion(ofstream &reporte, const Venta *v, int n);
+void productoMayorVendido(ofstream &reporte, const Venta *v, int n);
+void ventasSospechosas(ofstream &reporte, const Venta *v, int n);
+void liberarVentas(Venta *&v);
 void generarReporte(const char *nombre, int numEmpleados);
 
 int main(){
     char nombre[]="input/ventas.dat";
     generarReporte(nombre,numeroRegistrosArchivo(nombre));
+
     return 0;
 }
 
-void generarReporte(const char *nombre, int numEmpleados){
-    if(numEmpleados==-1) return;
+void generarReporte(const char *nombre, int numRegistros){
+    if(numRegistros==-1) return;
 
-    ofstream reporte(nombre);
+    ofstream reporte("output/reporte.txt");
     if(!reporte){
-        cerr<<"\nNo se abrio correctamente input/ventas.dat.\n";
+        cerr<<"\nNo se abrio correctamente output/reporte.txt.\n";
         return;
     }
 
-    Venta *ventas=extraerRegistrosArchivoBinario(nombre,numEmpleados);
+    Venta *ventas=extraerRegistrosArchivoBinario(nombre,numRegistros);
+    if(ventas==nullptr) return;
+
+    cout<<"\nGenerando reporte...\n";
 
     reporte<<"=== REPORTE GENERAL DE VENTAS ===\n";
-    reporte<<"\nTotal de registros: "<<numEmpleados<<endl;
+    reporte<<"\nTotal de registros: "<<numRegistros<<endl;
 
-    calcularMontoTotalVendido(reporte,ventas,numEmpleados);
+    calcularMontoTotalVendido(reporte,ventas,numRegistros);
+    vendedorMayorRecaudacion(reporte,ventas,numRegistros);
+    productoMayorVendido(reporte,ventas,numRegistros);
+    ventasSospechosas(reporte,ventas,numRegistros);
 
+    reporte.close();
+    liberarVentas(ventas);
+
+    cout<<"\nReporte general de ventas creado exitosamente!\n";
 }
 
 int numeroRegistrosArchivo(const char *nombre){
@@ -51,7 +65,10 @@ int numeroRegistrosArchivo(const char *nombre){
     ventas.seekg(0,ios::end);   //posicionamos el puntero de lectura al final del archivo
 
     //leemos la posicion del final del archivo y lo dividimos con el tamaño de la estructura, para el numero de registros
-    return (ventas.tellg())/sizeof(Venta);
+    int numRegistros=(ventas.tellg())/sizeof(Venta);
+
+    ventas.close();
+    return numRegistros;
 }
 
 Venta* extraerRegistrosArchivoBinario(const char *nombre, int n){
@@ -62,7 +79,9 @@ Venta* extraerRegistrosArchivoBinario(const char *nombre, int n){
     }
 
     Venta *v = new Venta[n];   //espacio de memoria para almacenar los registros
-    ventas.read((char*)v, sizeof(v));   //leemos y almacenamos los registros en el arreglo
+
+    cout<<"\nExtrayendo datos del archivo binario...\n";
+    ventas.read((char*)v, sizeof(Venta)*n);   //leemos y almacenamos los registros en el arreglo
 
     ventas.close();
     return v;
@@ -71,6 +90,7 @@ Venta* extraerRegistrosArchivoBinario(const char *nombre, int n){
 void calcularMontoTotalVendido(ofstream &reporte, const Venta *v, int n){
     double montoTotal=0;
 
+    //al parecer, los precios unitarios no se mantienen para el mismo producto, cambian en cada registro en el mismo producto
     for(int i=0; i<n; i++){
         montoTotal += v[i].cantidad * v[i].precioUnitario;  //monto total de cada registro
     }
@@ -143,4 +163,22 @@ void productoMayorVendido(ofstream &reporte, const Venta *v, int n){
     reporte<<"\nPRODUCTO MAS VENDIDO:";
     reporte<<"\nID Producto: "<<idMejorVendido;
     reporte<<"\nTotal unidades: "<<mayorUnidadesVendidas<<endl;
+}
+
+void ventasSospechosas(ofstream &reporte, const Venta *v, int n){
+    reporte<<"\n-------------------------------------";
+    reporte<<"\nVENTAS SOSPECHOSAS (cantidad > 100):\n";
+
+    reporte<<left;
+    for(int i=0; i<n; i++){
+        if(v[i].cantidad>100){
+            reporte<<"\nID Venta: "<<setw(3)<<v[i].idVenta<<" | Vendedor: "<<setw(2)<<v[i].idVendedor;
+            reporte<<" | Producto: "<<setw(2)<<v[i].idProducto<<" | Cantidad: "<<v[i].cantidad;
+        }
+    }
+}
+
+void liberarVentas(Venta *&v){
+    delete[] v;
+    v=nullptr;
 }
