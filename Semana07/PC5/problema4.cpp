@@ -45,7 +45,21 @@ int numeroRegistrosArchivo(const char *nombre){
     return (ventas.tellg())/sizeof(Venta);
 }
 
-double calcularMontoTotalVendido(const Venta* const v, int n){
+Venta* extraerRegistrosArchivoBinario(const char *nombre, int n){
+    ifstream ventas(nombre, ios::binary);
+    if(!ventas){
+        cerr<<"\nNo se abrio correctamente input/ventas.dat.\n";
+        return nullptr;
+    }
+
+    Venta *v = new Venta[n];   //espacio de memoria para almacenar los registros
+    ventas.read((char*)v, sizeof(v));   //leemos y almacenamos los registros en el arreglo
+
+    ventas.close();
+    return v;
+}
+
+double calcularMontoTotalVendido(const Venta *v, int n){
     double montoTotal=0;
 
     for(int i=0; i<n; i++){
