@@ -4,6 +4,7 @@
 #include<string>
 #include<fstream>
 
+//debe serializarse el string para guaradar correctamente en binario, o en cambio usar char[]
 class Vehiculo {
 protected:
     std::string placa;
