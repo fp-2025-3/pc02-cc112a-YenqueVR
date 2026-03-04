@@ -82,18 +82,22 @@ void liberarPolinomio(Polinomio &p){
 int main(){
     Polinomio p,der;
     double x=1;
-    crearPolinomio(p,4);
+    int n;
+    cout<<"\nIngrese el numero de terminos del polinomio p: ";
+    cin>>n;
+
+    crearPolinomio(p,n);
     leerPolinomio(p);
 
     cout<<"\nPolinomio p: ";
     mostrarPolinomio(p);
-    cout<<"Polinomio p evaluado en x="<<x<<": "<<evaluarPolinomio(p,x);
+    cout<<"p("<<x<<") = "<<evaluarPolinomio(p,x);
 
     derivarPolinomio(p,der);
 
     cout<<"\n\nPolinomio der: ";
     mostrarPolinomio(der);
-    cout<<"Polinomio der evaluado en x="<<x<<": "<<evaluarPolinomio(der,x)<<endl;
+    cout<<"der("<<x<<") = "<<evaluarPolinomio(der,x)<<endl;
     
     liberarPolinomio(p);
     liberarPolinomio(der);
