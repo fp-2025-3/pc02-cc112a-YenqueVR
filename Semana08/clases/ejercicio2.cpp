@@ -19,6 +19,7 @@ void retirar(fstream &archivo, CuentaBancaria cuenta);
 void operacionCuenta(void (*operacion)(fstream&,CuentaBancaria));
 void desactivarCuenta(fstream &archivo, int numeroCuenta);
 void mostrarCuentasActivas(fstream &archivo);
+void mostrarCuenta(CuentaBancaria cuenta);
 
 int main(){
     int N;
@@ -38,6 +39,7 @@ int main(){
             case 3:
             {fstream archivo("output/cuentas.dat", ios::binary|ios::out | ios::in);
             int numeroCuenta=0;
+            cout<<"\nIngresa el numero de cuenta: "; cin>>numeroCuenta;
             if(numeroCuenta<=0){
                 cerr<<"\nEl numero de cuenta debe ser positivo mayor a 0.\n";
                 break;
@@ -54,7 +56,10 @@ int main(){
                 cerr<<"\nEl numero de cuenta debe ser positivo mayor a 0.\n";
                 break;
             }
-            buscarCuenta(archivo,numeroCuenta);
+            CuentaBancaria cuenta=buscarCuenta(archivo,numeroCuenta);
+            if(cuenta.numeroCuenta==-1) break;
+            mostrarCuenta(cuenta);
+
             archivo.close();
             }
             break;
@@ -85,7 +90,7 @@ int opciones(int &opc){
     cout<<"\n1. Depositar.";
     cout<<"\n2. Retirar.";
     cout<<"\n3. Desactivar cuenta.";
-    cout<<"\n4. Buscar cuentas activas.";
+    cout<<"\n4. Buscar cuentas.";
     cout<<"\n5. Mostrar cuentas activas.";
     cout<<"\n6. Salir.";
     cout<<"\nOpcion --> "; cin>>opc;
@@ -180,7 +185,6 @@ bool agregarCuentaArchivo(fstream &archivo, CuentaBancaria &cuenta){
     }
 
     archivo.clear();    //Si fallo la lectura, debemos reestablecer los valores de archivo
-//cd Documents/PC02/Semana08/clases
 
     cin.width(40);
     cout<<"Titular: "; cin>>cuenta.titular;
@@ -211,7 +215,7 @@ void depositar(fstream &archivo, CuentaBancaria cuenta){
     cuenta.saldo+=deposito; //actualizamos el saldo
     archivo.write((char*)&cuenta, sizeof(CuentaBancaria));  //modificamos en el archivo
 
-    cout<<"\nDeposit realizado con exito.\n";
+    cout<<"\nDeposito realizado con exito.\n";
 }
 
 void retirar(fstream &archivo, CuentaBancaria cuenta){
@@ -261,7 +265,7 @@ void desactivarCuenta(fstream &archivo, int numeroCuenta){
     if(cuenta.numeroCuenta==-1) return;
 
     if(!cuenta.activa){
-        cerr<<"\nLa cuenta no estaba activada. Desactivacion cnacelada.\n";
+        cerr<<"\nLa cuenta no estaba activada. Desactivacion cancelada.\n";
         archivo.close();
         return;
     }
@@ -289,9 +293,18 @@ void mostrarCuentasActivas(fstream &archivo){
             continue;
         }
 
-        cout<<"Numero Cuenta: "<<cuenta.numeroCuenta<<" | Titular: "<<cuenta.titular;
-        cout<<" | Saldo: "<<cuenta.saldo<<endl;
+        if(!cuenta.activa) continue;
+
+        mostrarCuenta(cuenta);
     }
 
     archivo.close();
+}
+
+void mostrarCuenta(CuentaBancaria cuenta){
+    cout<<"Numero Cuenta: "<<cuenta.numeroCuenta<<" | Titular: "<<cuenta.titular;
+    cout<<" | Saldo: "<<cuenta.saldo<<" | Estado: ";
+    if(cuenta.activa) cout<<"Activo";
+    else cout<<"Desactivado";
+    cout<<endl;
 }
