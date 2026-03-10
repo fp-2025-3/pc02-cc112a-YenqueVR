@@ -1,0 +1,43 @@
+=== REPORTE GENERAL DE ESTUDIANTES ===
+
+Total de estudiantes: 30
+
+Estudiantes:
+Codigo: 1001 | Nombre: Juan | Promedio: 15.6667 | Condicion: APROBADO
+Codigo: 1002 | Nombre: Maria | Promedio: 10.6667 | Condicion: APROBADO
+Codigo: 1003 | Nombre: Luis | Promedio: 19 | Condicion: APROBADO
+Codigo: 1004 | Nombre: Ana | Promedio: 8.33333 | Condicion: DESAPROBADO
+Codigo: 1005 | Nombre: Carlos | Promedio: 15.3333 | Condicion: APROBADO
+Codigo: 1006 | Nombre: Lucia | Promedio: 12 | Condicion: APROBADO
+Codigo: 1007 | Nombre: Pedro | Promedio: 6 | Condicion: DESAPROBADO
+Codigo: 1008 | Nombre: Sofia | Promedio: 19 | Condicion: APROBADO
+Codigo: 1009 | Nombre: Diego | Promedio: 15 | Condicion: APROBADO
+Codigo: 1010 | Nombre: Valeria | Promedio: 9 | Condicion: DESAPROBADO
+Codigo: 1011 | Nombre: Andres | Promedio: 13 | Condicion: APROBADO
+Codigo: 1012 | Nombre: Carmen | Promedio: 17 | Condicion: APROBADO
+Codigo: 1013 | Nombre: Ricardo | Promedio: 9 | Condicion: DESAPROBADO
+Codigo: 1014 | Nombre: Elena | Promedio: 19 | Condicion: APROBADO
+Codigo: 1015 | Nombre: Miguel | Promedio: 6 | Condicion: DESAPROBADO
+Codigo: 1016 | Nombre: Patricia | Promedio: 15 | Condicion: APROBADO
+Codigo: 1017 | Nombre: Fernando | Promedio: 11 | Condicion: APROBADO
+Codigo: 1018 | Nombre: Daniela | Promedio: 19.6667 | Condicion: APROBADO
+Codigo: 1019 | Nombre: Jorge | Promedio: 5 | Condicion: DESAPROBADO POR REGLA ACADEMICA
+Codigo: 1020 | Nombre: Paola | Promedio: 14 | Condicion: APROBADO
+Codigo: 1021 | Nombre: Marco | Promedio: 12 | Condicion: APROBADO
+Codigo: 1022 | Nombre: Rosa | Promedio: 8 | Condicion: DESAPROBADO
+Codigo: 1023 | Nombre: Julio | Promedio: 17 | Condicion: APROBADO
+Codigo: 1024 | Nombre: Teresa | Promedio: 10 | Condicion: APROBADO
+Codigo: 1025 | Nombre: Hugo | Promedio: 18 | Condicion: APROBADO
+Codigo: 1026 | Nombre: Alicia | Promedio: 13 | Condicion: APROBADO
+Codigo: 1027 | Nombre: Bruno | Promedio: 6 | Condicion: DESAPROBADO
+Codigo: 1028 | Nombre: Claudia | Promedio: 15 | Condicion: APROBADO
+Codigo: 1029 | Nombre: Ivan | Promedio: 9 | Condicion: DESAPROBADO
+Codigo: 1030 | Nombre: Monica | Promedio: 17 | Condicion: APROBADO
+
+
+Promedio general del curso: 12.7889
+
+Estudiante con mayor promedio:
+Codigo: 1018 | Nombre: Daniela | Promedio: 19.6667
+Estudiante con menor promedio:
+Codigo: 1019 | Nombre: Jorge | Promedio: 5
